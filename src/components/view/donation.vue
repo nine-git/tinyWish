@@ -5,8 +5,8 @@
     </header>
 
     <div class="main">
-      <div class="main_item" v-for="item in list" :key="item.id">
-        <img alt class="main_img" :src="item.supplies_img" />
+      <div :key="item.id" class="main_item" v-for="item in list">
+        <img :src="item.supplies_img" alt class="main_img" />
         <p>物资名称：{{item.supplies_name}}</p>
         <p>到期时间：{{item.supplies_time}}</p>
         <p>物资认领状态：{{item.review_state}}</p>
@@ -25,6 +25,10 @@ export default {
     }
   },
   mounted () {
+    api.getFormsAPI().then(res => {
+      console.log(res)
+    })
+
     api.getFormsResponsesAPI().then(res => {
       // console.log(res)
       this.list = unit.listData(res.data)
@@ -34,7 +38,6 @@ export default {
     aa (str) {
       console.log(str)
     }
-
   }
 
 }

@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <router-link class="wish" to="wish">个人心愿</router-link>
-    <router-link class="donation" to="donation">捐赠审核</router-link>
+    <router-link class="donation" to="donation">捐赠发布</router-link>
+    <router-link class="claim" to="claim">我要认领心愿</router-link>
+    <router-link class="apply" to="apply">我要申领物资</router-link>
   </div>
 </template>
 
@@ -18,22 +20,21 @@ export default {
 
 <style lang="scss" scoped>
 .home {
-  margin: 0px auto;
-  padding: 5rem;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: url('../../assets/img/bg.png');
+  background-size: cover;
 
-  .wish {
-    width: 5rem;
-    height: 5rem;
-    display: block;
-    color: black;
-    font-size: 1rem;
-  }
-  .donation {
-    width: 5rem;
-    height: 5rem;
-    display: block;
-    color: black;
-    font-size: 1rem;
+  a {
+    background: #af6aade6;
+    margin: 1rem;
+    padding: 1rem;
+    width: 50vw;
+    color: #fff;
+    border-radius: 30px;
   }
 }
 </style>
