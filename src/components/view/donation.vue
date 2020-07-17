@@ -25,11 +25,11 @@ export default {
     }
   },
   mounted () {
-    api.getFormsAPI().then(res => {
+    api.getFormsAPI(334).then(res => {
       console.log(res)
     })
 
-    api.getFormsResponsesAPI().then(res => {
+    api.getFormsResponsesAPI(334).then(res => {
       // console.log(res)
       this.list = unit.listData(res.data)
     })
