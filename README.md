@@ -1,4 +1,4 @@
-# property_consultant
+# tinyWish
 
 > A Vue.js project
 
