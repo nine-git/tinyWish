@@ -1,12 +1,12 @@
 <template>
   <div class="claim">
     <claim-header :title="title"></claim-header>
-
   </div>
 </template>
 
 <script>
 import claimHeader from '../component/header'
+import api from '../../api/api'
 export default {
   name: 'wish',
   data () {
@@ -18,10 +18,12 @@ export default {
   components: {
     claimHeader
   },
-  methods: {
-
+  mounted () {
+    api.getFormsResponsesAPI(328).then(res => {
+      console.log(res)
+    })
   },
-  created () {
+  methods: {
   }
 }
 </script>
