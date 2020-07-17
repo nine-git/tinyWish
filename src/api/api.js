@@ -3,7 +3,6 @@ import http from '../unit/http'
 // import cookie from 'js-cookie'
 
 export default {
-
   // 获取表单对象
   getFormsAPI (tableID) {
     return http.get(`/api/v4/forms/${tableID}`, '')
