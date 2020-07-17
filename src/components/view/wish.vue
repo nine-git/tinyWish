@@ -10,19 +10,19 @@
 </template>
 
 <script>
-    export default {
-      name:"wish",
-      data(){
-        return{
+export default {
+  name: 'wish',
+  data () {
+    return {
 
-        }
-      },
-      methods:{
-
-      },
-      created() {
-      }
     }
+  },
+  methods: {
+
+  },
+  created () {
+  }
+}
 </script>
 
 <style>

@@ -31,5 +31,6 @@ window.onload = function () {
   text-align: center;
   color: #2c3e50;
   font-size: 16px;
+  height: 100%;
 }
 </style>
