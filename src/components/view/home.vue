@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <router-link class="wish" to="wish">个人心愿</router-link>
-    <router-link class="donation" to="donation">捐赠发布</router-link>
+    <router-link class="wish" to="wish">个人心愿审核</router-link>
+    <router-link class="donation" to="donation">捐赠审核</router-link>
     <router-link class="claim" to="claim">我要认领心愿</router-link>
     <router-link class="apply" to="apply">我要申领物资</router-link>
   </div>
