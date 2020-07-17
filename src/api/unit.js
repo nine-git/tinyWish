@@ -11,7 +11,6 @@ export default {
       tableObjData.supplies_img = ele.supplies_img.exported_value[0]
       tableObjData.supplies_time = ele.supplies_time.exported_value[0]
       tableObjData.review_state = ele.review_state.exported_value[0]
-
       tableList.push(tableObjData)
     })
     return tableList
