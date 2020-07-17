@@ -10,6 +10,11 @@ export default [
     component: () => import(/* webpackChunkName:'wish' */'@/components/view/wish')
   },
   {
+    path: '/claim',
+    name: 'claim',
+    component: () => import(/* webpackChunkName:'claim' */'@/components/view/claim')
+  },
+  {
     path: '/donation',
     name: 'donation',
     component: () => import(/* webpackChunkName:'donation' */'@/components/view/donation')
