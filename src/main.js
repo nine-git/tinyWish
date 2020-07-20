@@ -6,7 +6,7 @@ import router from './router'
 import './assets/css/reset.css'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
-import { List, Tab, Tabs, Toast, Loading, Popup } from 'vant'
+import { List, Tab, Tabs, Toast, Loading, Popup ,Button} from 'vant'
 
 Vue.prototype.$axios = axios
 
@@ -18,6 +18,7 @@ Vue.use(Tab)
 Vue.use(Loading)
 Vue.use(Popup)
 Vue.use(Tabs)
+Vue.use(Button)
 
 Vue.config.productionTip = false
 
