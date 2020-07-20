@@ -14,6 +14,43 @@ export default {
       tableList.push(tableObjData)
     })
     return tableList
+  },
+
+  // 构建传输对象
+  tableListData (fields, orderFieldList) {
+    let tableList = []
+    orderFieldList.forEach(element => {
+      let field = fields.find(field => field.identity_key === element)
+      let objData = {}
+      if (field) {
+        objData = {
+          field_id: field.id,
+          identity_key: field.identity_key,
+          type: field.type,
+          title: field.title,
+          value: field.value
+        }
+      }
+      tableList.push(objData)
+    })
+
+    return tableList
+  },
+  // 获取当前时间
+  formatDateTime () {
+    let date = new Date()
+    let y = date.getFullYear()
+    let MM = date.getMonth() + 1
+    MM = MM < 10 ? '0' + MM : MM
+    let d = date.getDate()
+    d = d < 10 ? '0' + d : d
+    let h = date.getHours()
+    h = h < 10 ? '0' + h : h
+    let m = date.getMinutes()
+    m = m < 10 ? '0' + m : m
+    let s = date.getSeconds()
+    s = s < 10 ? '0' + s : s
+    return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s
   }
 
 }
