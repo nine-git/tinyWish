@@ -350,8 +350,8 @@ export default {
         }
         this.formData.push(objData)
       })
-      let a=this.formData.sort(function(a,b){
-        // order是规则  objs是需要排序的数组
+      this.formData.sort(function(a,b){
+        // order是规则
         var order = ["待审核", "已通过", "已退回"];
         return order.indexOf(a.audit.status) - order.indexOf(b.audit.status);
       });
