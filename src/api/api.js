@@ -21,7 +21,7 @@ export default {
   },
 
   // 上传7牛
-  postQiNiuApi (data) {
-    return http.post('https://up.qbox.me/', data)
+  postQiNiuApi (data, headers) {
+    return http.post('https://up.qbox.me/', data, headers)
   }
 }
