@@ -15,5 +15,5 @@ export default {
   putFormsAmendAPI (tableID, dataID, data) {
     return http.put(`api/v4/forms/${tableID}/responses/${dataID}`, data)
   }
-
+  //
 }
