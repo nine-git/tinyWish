@@ -93,7 +93,7 @@ export default {
       let month = newTime.getMonth()+1>9 ? newTime.getMonth()+1 : '0'+(newTime.getMonth()+1);
       let day = newTime.getDate();
       let hours = newTime.getHours();
-      let minutes = newTime.getMinutes();
+      let minutes = newTime.getMinutes()+1>9 ? newTime.getMinutes()+1 : '0'+(newTime.getMinutes()+1);
       return year +'-'+ month +'-'+ day +' '+ hours + ':' + minutes
     },
     //通过的函数
@@ -102,8 +102,6 @@ export default {
       let str=''//请求数据
       //请求所需要的字段
       let obj={}
-      let resStatus=false
-      console.log(this.getNewTime())
       this.formNameData.forEach((item)=>{
         if (item.identity_key==='auditdatetime'){
           obj.timeFileId=item.id
@@ -125,13 +123,7 @@ export default {
           })
         }
       })
-      this.formSumData=this.formSumData.filter(item=>item.id===this.formData[this.num].id)
-      this.formSumData[0].entries.forEach(item=>{
-        if (item.field_id===obj.timeFileId){
-          resStatus=true
-        }
-      })
-      if(!resStatus){
+      if(this.formData[this.num].audit.id){
         str = {"response": {
             "entries_attributes": [
               {
@@ -173,9 +165,10 @@ export default {
         this.show=false
         this.formSumData=res.data
         res.data.entries.forEach(item=>{
-          if (item.id===this.formData[this.num].audit.id){
-            this.formData[this.num].audit.option_id=item.option_id
+          if (item.value==="已通过"){
+            this.formData[this.num].audit.id=item.id
             this.formData[this.num].audit.status=item.value
+            this.formData[this.num].audit.option_id=item.option_id
           }
         })
 
@@ -186,7 +179,6 @@ export default {
       let str=''//请求数据
       //请求所需要的字段
       let obj={}
-      let resStatus=false
       if (this.myTextArea){
         //  有退回原因
         this.formNameData.forEach((item)=>{
@@ -205,13 +197,8 @@ export default {
             obj.rejectDescId=item.id
           }
         })
-        this.formSumData=this.formSumData.filter(item=>item.id===this.formData[this.num].id)
-        this.formSumData[0].entries.forEach(item=>{
-          if (item.field_id===obj.timeFileId){
-            resStatus=true
-          }
-        })
-        if(!resStatus){
+
+        if(this.formData[this.num].audit.id){
           str = {"response": {
               "entries_attributes": [
                 {
@@ -253,9 +240,10 @@ export default {
           this.show=false
           this.formSumData=res.data
           res.data.entries.forEach(item=>{
-            if (item.id===this.formData[this.num].audit.id){
-              this.formData[this.num].audit.option_id=item.option_id
+            if (item.value==="已退回"){
+              this.formData[this.num].audit.id=item.id
               this.formData[this.num].audit.status=item.value
+              this.formData[this.num].audit.option_id=item.option_id
             }
           })
 
@@ -269,9 +257,7 @@ export default {
       this.show = true;
       this.num=num
     },
-    creatForm () {
-      console.log(this.formData)
-    },
+
     //  重构时间（时间格式，时间）
     dateFormat(fmt, date) {
       var date = new Date(date);
@@ -295,6 +281,10 @@ export default {
     }
   },
   beforeCreate () {
+    api.getFormsAPI('328').then((res) => {
+      console.log(res)
+      this.formNameData = res.data.fields
+    })
     //  获取心愿审核的数据
     api.getFormsResponsesAPI('328').then((res) => {
       console.log(res)
@@ -307,18 +297,30 @@ export default {
           creatTime: '',
           img_url: '',
         }
+
+        //  对象创建的时间
+        objData.creatTime = this.dateFormat("YYYY-mm-dd HH:MM", item.created_at)
+        //  对象的id
+        objData.id = item.id
         //  对象的状态和option_id
         if (item.mapped_values.auditstatus){
           objData.audit.status = item.mapped_values.auditstatus.value[0].value
           objData.audit.option_id = item.mapped_values.auditstatus.value[0].id
         }else{
           objData.audit.status = '待审核'
-          objData.audit.option_id = ''
+          console.log(this.formNameData)
+          this.formNameData.forEach(item=>{
+            if (item.identity_key==='auditstatus'){
+              item.options.forEach(item=>{
+                if (item.value==='待审核'){
+                  objData.audit.option_id =item.id
+                }
+              })
+            }
+          })
+
+          objData.audit.id = ''
         }
-        //  对象创建的时间
-        objData.creatTime = this.dateFormat("YYYY-mm-dd HH:MM", item.created_at)
-        //  对象的id
-        objData.id = item.id
         //对象的心愿描述内容
         objData.pepole.wishdesc = item.mapped_values.wishdesc.value[0]
         objData.pepole.community = item.mapped_values.community.value[0].value
@@ -338,7 +340,7 @@ export default {
             objData.pepole.name = item.entries[y].value || ''
             objData.pepole.field_id = item.entries[y].field_id
           }
-          //  对象的名字和field_id
+          //  对象状态的field_id
           if (objData.audit.status === item.entries[y].value){
             objData.audit.id = item.entries[y].id
           }
@@ -348,17 +350,13 @@ export default {
         }
         this.formData.push(objData)
       })
-      console.log(this.formData)
       let a=this.formData.sort(function(a,b){
         // order是规则  objs是需要排序的数组
         var order = ["待审核", "已通过", "已退回"];
         return order.indexOf(a.audit.status) - order.indexOf(b.audit.status);
       });
     })
-    api.getFormsAPI('328').then((res) => {
-      console.log(res)
-      this.formNameData = res.data.fields
-    })
+
   }
 }
 </script>
