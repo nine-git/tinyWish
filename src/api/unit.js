@@ -23,15 +23,27 @@ export default {
       let field = fields.find(field => field.identity_key === element)
       let objData = {}
       if (field) {
-        objData = {
-          field_id: field.id,
-          identity_key: field.identity_key,
-          type: field.type,
-          title: field.title,
-          value: field.value
+        switch (field.type) {
+          case 'Field::RadioButton': {
+            objData.field_id = field.id
+            objData.identity_key = field.identity_key
+            objData.type = field.type
+            objData.title = field.title
+            objData.option_id = ''
+            objData.options = field.options
+            break
+          }
+
+          default: {
+            objData.field_id = field.id
+            objData.identity_key = field.identity_key
+            objData.type = field.type
+            objData.title = field.title
+            objData.value = ''
+          }
         }
+        tableList.push(objData)
       }
-      tableList.push(objData)
     })
 
     return tableList
