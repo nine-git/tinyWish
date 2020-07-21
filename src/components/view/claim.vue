@@ -2,31 +2,47 @@
   <div class="claim">
     <claim-header :title="title"></claim-header>
     <div class="main">
-      <div :key="item.id" @click=" claim(item)" class="main_item" v-for="item in list">
-        <img :src="item.img" alt class="main_img" />
-        <p v-if="item.mapped_values.name">
-          {{item.mapped_values.name.exported_value[0]}}的心愿：
-          <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
-        </p>
-        <p v-if="item.time">{{item.time}}</p>
-        <button class="mian_button button">
-          <span v-if="item.mapped_values.claimstatus">
-            <span
-              class="claiming"
-              v-if="item.mapped_values.claimstatus.exported_value[0] == '待认领'"
-            >待认领</span>
-            <span
-              class="complete"
-              v-if="item.mapped_values.claimstatus.exported_value[0] == '已完成'"
-            >已完成</span>
-            <span
-              class="claimed"
-              v-if="item.mapped_values.claimstatus.exported_value[0] == '已认领'"
-            >已认领</span>
-          </span>
-          <span class="claiming" v-else>待认领</span>
-        </button>
-      </div>
+      <van-tabs v-model="active">
+        <van-tab title="待认领">
+          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
+            <img :src="item.img" alt class="main_img" />
+            <p v-if="item.mapped_values.name">
+              {{item.mapped_values.name.exported_value[0]}}的心愿：
+              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+            </p>
+            <p v-if="item.time">{{item.time}}</p>
+            <button class="mian_button button">
+              <span class="claiming">待认领</span>
+            </button>
+          </div>
+        </van-tab>
+        <van-tab title="已认领">
+          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimedList">
+            <img :src="item.img" alt class="main_img" />
+            <p v-if="item.mapped_values.name">
+              {{item.mapped_values.name.exported_value[0]}}的心愿：
+              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+            </p>
+            <p v-if="item.time">{{item.time}}</p>
+            <button class="mian_button button">
+              <span class="claimed">已认领</span>
+            </button>
+          </div>
+        </van-tab>
+        <van-tab title="已完成">
+          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in finishList">
+            <img :src="item.img" alt class="main_img" />
+            <p v-if="item.mapped_values.name">
+              {{item.mapped_values.name.exported_value[0]}}的心愿：
+              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+            </p>
+            <p v-if="item.time">{{item.time}}</p>
+            <button class="mian_button button">
+              <span class="complete">已完成</span>
+            </button>
+          </div>
+        </van-tab>
+      </van-tabs>
     </div>
     <van-popup
       :style="{ height: '80%',width:'80%' }"
@@ -120,7 +136,9 @@ export default {
   data () {
     return {
       title: '认领心愿',
-      list: [],
+      claimedList: [],
+      finishList: [],
+      claimList: [],
       show: false,
       fromData: '',
       fields: '',
@@ -129,7 +147,9 @@ export default {
       date: '',
       dataID: '',
       option_id: '',
-      uptoken: ''
+      uptoken: '',
+      value_id: '',
+      active: 0
     }
   },
   components: {
@@ -141,10 +161,20 @@ export default {
       res = res.data
       res.forEach(element => {
         if (element.mapped_values.auditstatus) {
-          if (element.mapped_values.auditstatus.exported_value[0] === '已通过') {
+          if (element.mapped_values.auditstatus.exported_value[0] === '已通过' && element.mapped_values.claimstatus.exported_value[0] == '已认领') {
             element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
             element.time = element.created_at.slice(0, 10)
-            this.list.push(element)
+            this.claimedList.push(element)
+          }
+          if (element.mapped_values.auditstatus.exported_value[0] === '已通过' && element.mapped_values.claimstatus.exported_value[0] == '已完成') {
+            element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
+            element.time = element.created_at.slice(0, 10)
+            this.finishList.push(element)
+          }
+          if (element.mapped_values.auditstatus.exported_value[0] === '已通过' && element.mapped_values.claimstatus.exported_value[0] == '待认领') {
+            element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
+            element.time = element.created_at.slice(0, 10)
+            this.claimList.push(element)
           }
         }
       })
@@ -161,29 +191,32 @@ export default {
   methods: {
     // 文件的上传
     afterRead (file) {
+      let formData = new FormData()
       // 此时可以自行将文件上传至服务器
-      console.log(file)
-      let data = {
-        token: this.uptoken,
-        file: file,
-        'x:key': '1593596993542'
-      }
-      //  contentType:false,
-      //  processData:false,
-      //  cache: false,
+      formData.append('file', file.file)
+      formData.append('token', this.uptoken)
+      formData.append('x:key', '1597796993541')
+      let data = formData
 
-      api.postQiNiuApi(data).then(res => {
-        console.log(res)
+      let headers = {
+        'content-type': false
+      }
+
+      api.postQiNiuApi(data, headers).then(res => {
+        if (res.status === 200) {
+          this.$toast('上传成功 ✨')
+          this.value_id = res.data.id
+        } else {
+          this.$toast('网络波动，请再试一次')
+        }
       })
     },
     claim (el) {
       el.entries.forEach(element => {
         if (element.field_id === 9190) {
-          console.log(element)
           this.option_id = element.id
         }
       })
-
       this.show = true
       this.dataID = el.id
       this.fromData = {
@@ -227,7 +260,6 @@ export default {
       this.date = unit.formatDateTime()
       let payload = {
         response: { entries_attributes: [] }
-        // user_id: 11
       }
       data.forEach(element => {
         if (element.value !== '') {
@@ -248,7 +280,6 @@ export default {
           field_id: 9270,
           value: this.date
         })
-      console.log(payload)
       api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
         if (res.status === 200) {
           this.$toast('认领成功 ✨')
@@ -277,14 +308,22 @@ export default {
         {
           field_id: 9202,
           value: this.date
+        },
+        {
+          id: this.option_id,
+          field_id: 9190,
+          option_id: 7362 },
+        {
+          field_id: 9189,
+          value: '附件',
+          value_id: this.value_id
         })
-      console.log(payload)
       api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
         if (res.status === 200) {
-          this.$toast('认领成功 ✨')
+          this.$toast('上传成功 ✨')
           this.$router.go(0)
         } else {
-          this.$toast('认领失败 >_<')
+          this.$toast('上传失败 >_<')
         }
       })
     }
@@ -295,9 +334,16 @@ export default {
 <style lang="scss" scoped>
 .main {
   margin: 1rem auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+
+  .van-tab__pane {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .van-tabs {
+    width: 100%;
+  }
 
   .main_item {
     width: 50%;

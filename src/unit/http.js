@@ -18,11 +18,12 @@ const http = {
     }
     return request(config)
   },
-  post (url, data) {
+  post (url, data, headers) {
     const config = {
       method: 'post',
       url: url,
-      data
+      data,
+      headers
     }
     return request(config)
   },

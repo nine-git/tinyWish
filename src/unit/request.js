@@ -13,7 +13,7 @@ const service = axios.create({
   timeout: 3 * 1000,
   headers: {
     'X-Requested-With': 'XMLHttpRequest',
-    'Content-Type': 'application/json;charset=UTF-8',
+    // 'Content-Type': 'application/json;charset=UTF-8',
     'cache-control': 'max-age=0, private, must-revalidate',
     'Authorization': '760aa4f94594a1e58352a288021fb90cd0ae29bea865ca0c106e0054c2d7fea4:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1lc3BhY2VfaWQiOjd9._oYNdkJna4jaB-SzMZ4edpydgpwrhVPEPTcEZxTHRwo'
   }
