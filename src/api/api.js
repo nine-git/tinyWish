@@ -14,6 +14,14 @@ export default {
   // 填写表单数据
   putFormsAmendAPI (tableID, dataID, data) {
     return http.put(`api/v4/forms/${tableID}/responses/${dataID}`, data)
+  },
+  // 上传附件
+  getUptokenAPI () {
+    return http.get(`/api/v4/attachments/uptoken?purpose=create_responses`)
+  },
+
+  // 上传7牛
+  postQiNiuApi (data) {
+    return http.post('https://up.qbox.me/', data)
   }
-  //
 }

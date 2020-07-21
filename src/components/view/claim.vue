@@ -82,7 +82,10 @@
           <!-- 交接模块 -->
           <div v-if="!fromData.finishdesc">
             <div :key="item.identity_key" v-for="item in tableData">
-              <p v-if="item.identity_key ==='finishphoto'">1</p>
+              <div v-if="item.identity_key ==='finishphoto'">
+                <p class="finishphoto">上传交接图片：</p>
+                <van-uploader :after-read="afterRead" />
+              </div>
               <p v-if="item.identity_key ==='finishdesc'">
                 <van-field
                   :label="item.title +'：'"
@@ -125,7 +128,8 @@ export default {
       tableData: [],
       date: '',
       dataID: '',
-      option_id: ''
+      option_id: '',
+      uptoken: ''
     }
   },
   components: {
@@ -149,8 +153,29 @@ export default {
       this.fields = res.data.fields
       this.tableData = unit.tableListData(this.fields, this.orderFieldList)
     })
+
+    api.getUptokenAPI().then(res => {
+      this.uptoken = res.data.uptoken
+    })
   },
   methods: {
+    // 文件的上传
+    afterRead (file) {
+      // 此时可以自行将文件上传至服务器
+      console.log(file)
+      let data = {
+        token: this.uptoken,
+        file: file,
+        'x:key': '1593596993542'
+      }
+      //  contentType:false,
+      //  processData:false,
+      //  cache: false,
+
+      api.postQiNiuApi(data).then(res => {
+        console.log(res)
+      })
+    },
     claim (el) {
       el.entries.forEach(element => {
         if (element.field_id === 9190) {
@@ -321,7 +346,8 @@ export default {
     height: 12rem;
     border-radius: 1rem;
   }
-  .popup_img_title {
+  .popup_img_title,
+  .finishphoto {
     margin-top: 2rem;
     text-align: left;
     padding: 1rem 2rem;

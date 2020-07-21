@@ -6,12 +6,13 @@ import router from './router'
 import './assets/css/reset.css'
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
-import { List, Tab, Tabs, Toast, Loading, Popup, Button, Field } from 'vant'
+import { List, Tab, Tabs, Toast, Loading, Popup, Button, Field, Uploader } from 'vant'
 
 Vue.prototype.$axios = axios
 
 Vue.use(VueCookies)
 
+Vue.use(Uploader)
 Vue.use(List)
 Vue.use(Toast)
 Vue.use(Tab)
