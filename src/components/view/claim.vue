@@ -46,7 +46,23 @@
         <div v-if="!fromData.claimer">
           <div :key="item.identity_key" v-for="item in tableData">
             <div v-if="item.type === 'Field::TextField'">
-              <p>
+              <p v-if="item.identity_key ==='claimer'">
+                <van-field
+                  :label="item.title +'：'"
+                  placeholder="请输入"
+                  type="text"
+                  v-model="item.value"
+                />
+              </p>
+              <p v-else-if="item.identity_key ==='claimphone'">
+                <van-field
+                  :label="item.title +'：'"
+                  placeholder="请输入"
+                  type="text"
+                  v-model="item.value"
+                />
+              </p>
+              <p v-else-if="item.identity_key ==='claimcompany'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -62,23 +78,24 @@
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
           <van-field label="认领人电话：" readonly type="text" v-model="fromData.claimphone" />
           <van-field label="认领人单位：" readonly type="text" v-model="fromData.claimcompany" />
-          <!-- <button @click="send(tableData)" class="popup_button button">确认认领</button> -->
 
           <!-- 交接模块 -->
           <div v-if="!fromData.finishdesc">
             <div :key="item.identity_key" v-for="item in tableData">
-              <div v-if="item.type === 'Field::TextField'">
-                <p>
-                  <van-field
-                    :label="item.title +'：'"
-                    placeholder="请输入"
-                    type="text"
-                    v-model="item.value"
-                  />
-                </p>
+              <div v-if="item.identity_key ==='finishphoto'">
+                <p class="finishphoto">上传交接图片：</p>
+                <van-uploader :after-read="afterRead" />
               </div>
+              <p v-if="item.identity_key ==='finishdesc'">
+                <van-field
+                  :label="item.title +'：'"
+                  placeholder="请输入"
+                  type="text"
+                  v-model="item.value"
+                />
+              </p>
             </div>
-            <button @click="send(tableData)" class="popup_button button">确认认领</button>
+            <button @click="finish(tableData)" class="popup_button button">资料提交</button>
           </div>
           <div v-else>
             <p class="popup_img_title">交接照片：</p>
@@ -107,10 +124,12 @@ export default {
       show: false,
       fromData: '',
       fields: '',
-      orderFieldList: ['claimer', 'claimphone', 'claimcompany', 'claimstatus'],
+      orderFieldList: ['claimer', 'claimphone', 'claimcompany', 'claimstatus', 'finishphoto', 'finishdesc', 'finishdatetime'],
       tableData: [],
       date: '',
-      dataID: ''
+      dataID: '',
+      option_id: '',
+      uptoken: ''
     }
   },
   components: {
@@ -134,10 +153,36 @@ export default {
       this.fields = res.data.fields
       this.tableData = unit.tableListData(this.fields, this.orderFieldList)
     })
+
+    api.getUptokenAPI().then(res => {
+      this.uptoken = res.data.uptoken
+    })
   },
   methods: {
+    // 文件的上传
+    afterRead (file) {
+      // 此时可以自行将文件上传至服务器
+      console.log(file)
+      let data = {
+        token: this.uptoken,
+        file: file,
+        'x:key': '1593596993542'
+      }
+      //  contentType:false,
+      //  processData:false,
+      //  cache: false,
+
+      api.postQiNiuApi(data).then(res => {
+        console.log(res)
+      })
+    },
     claim (el) {
-      console.log(el)
+      el.entries.forEach(element => {
+        if (element.field_id === 9190) {
+          console.log(element)
+          this.option_id = element.id
+        }
+      })
 
       this.show = true
       this.dataID = el.id
@@ -181,21 +226,23 @@ export default {
       // 获取时间
       this.date = unit.formatDateTime()
       let payload = {
-        response: { entries_attributes: [] },
-        user_id: 11
+        response: { entries_attributes: [] }
+        // user_id: 11
       }
-
       data.forEach(element => {
-        if (element.value !== '' && element) {
-          payload.response.entries_attributes.push({
-            field_id: element.field_id,
-            value: element.value })
+        if (element.value !== '') {
+          if (element.field_id !== 9190) {
+            payload.response.entries_attributes.push({
+              field_id: element.field_id,
+              value: element.value })
+          }
         }
       })
       // 自动填值
       payload.response.entries_attributes.push(
         {
-          id: 1260775,
+          id: this.option_id,
+          field_id: 9190,
           option_id: 7361 },
         {
           field_id: 9270,
@@ -203,8 +250,39 @@ export default {
         })
       console.log(payload)
       api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
-        if (res.status === 201) {
+        if (res.status === 200) {
           this.$toast('认领成功 ✨')
+          this.$router.go(0)
+        } else {
+          this.$toast('认领失败 >_<')
+        }
+      })
+    },
+    finish (data) {
+      this.date = unit.formatDateTime()
+      let payload = {
+        response: { entries_attributes: [] }
+      }
+      data.forEach(element => {
+        if (element.value !== '') {
+          if (element.field_id !== 9190) {
+            payload.response.entries_attributes.push({
+              field_id: element.field_id,
+              value: element.value })
+          }
+        }
+      })
+      // 自动填值
+      payload.response.entries_attributes.push(
+        {
+          field_id: 9202,
+          value: this.date
+        })
+      console.log(payload)
+      api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
+        if (res.status === 200) {
+          this.$toast('认领成功 ✨')
+          this.$router.go(0)
         } else {
           this.$toast('认领失败 >_<')
         }
@@ -268,7 +346,8 @@ export default {
     height: 12rem;
     border-radius: 1rem;
   }
-  .popup_img_title {
+  .popup_img_title,
+  .finishphoto {
     margin-top: 2rem;
     text-align: left;
     padding: 1rem 2rem;
