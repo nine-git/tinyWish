@@ -16,7 +16,7 @@
           </div>
         </van-tab>
         <van-tab title="已通过">
-          <div v-for="(item,i) in passFormData" class="wishContainer" @click="showPopup(item)">
+          <div v-for="(item) in passFormData" class="wishContainer" @click="showPopup(item)">
             <div class="wishImg">
               <img :src=item.img_url alt="">
             </div>
@@ -28,7 +28,7 @@
           </div>
         </van-tab>
         <van-tab title="已退回">
-          <div v-for="(item,i) in unpassFormData" class="wishContainer" @click="showPopup(item)">
+          <div v-for="(item) in unpassFormData" class="wishContainer" @click="showPopup(item)">
             <div class="wishImg">
               <img :src=item.img_url alt="">
             </div>
@@ -71,7 +71,6 @@
 
 <script>
 import api from '@/api/api'
-import unit from "@/api/unit";
 import claimHeader from '../component/header'
 export default {
   name: 'wish',
@@ -81,7 +80,6 @@ export default {
   data () {
     return {
       maxtext:100,//退回原因最大字数限制
-      name:'',
       active: 0,
       title: '心愿审核',
       myTextArea:'',//文本域的内容
@@ -309,7 +307,7 @@ export default {
     //  获取心愿审核的数据
     api.getFormsResponsesAPI('328').then((res) => {
       this.formSumData=res.data
-      res.data.forEach((item,i)=> {
+      res.data.forEach((item)=> {
         let objData = {
           id: '',
           audit: {id:'',status: '', option_id: ''},
@@ -375,11 +373,6 @@ export default {
           this.unpassFormData.push(objData)
         }
       })
-      // this.formData.sort(function(a,b){
-      //   // order是规则
-      //   var order = ["待审核", "已通过", "已退回"];
-      //   return order.indexOf(a.audit.status) - order.indexOf(b.audit.status);
-      // });
     })
   }
 }
@@ -438,7 +431,7 @@ export default {
         left: 50%;
         transform: translateX(-50%);
         margin: 0.5rem auto;
-        border-radius: 2rem;
+        border-radius: 0.5rem;
         border: none;
         display: block;
         line-height: 3rem;
