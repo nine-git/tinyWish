@@ -62,6 +62,7 @@
         <van-field label="物质名称：" readonly type="text" v-model="formData.pepole.supplies_name" />
         <van-field label="企业地址：" readonly type="text" v-model="formData.pepole.company_address" />
         <van-field label="截止时间：" readonly type="text" v-model="formData.pepole.supplies_time" />
+        <van-field v-if="formData.audit.status==='已退回'" label="退回原因：" readonly type="text" v-model="formData.pepole.retrunReject" />
         <van-field v-if="formData.audit.status==='待审核'" autosize label="回退理由："  type="textarea" v-model="myTextArea" />
         <p class="textNum" v-if="myTextArea.length<=maxtext&&formData.audit.status==='待审核'">{{myTextArea.length||0}}/{{maxtext}}</p>
         <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.status==='待审核'"><span :style="{ color:'red' }">{{myTextArea.length||0}}</span>/200</p>
@@ -107,11 +108,9 @@ export default {
   mounted () {
     api.getFormsAPI(this.formId).then(res => {
       this.formNameData = res.data.fields
-      console.log(res)
     })
 
     api.getFormsResponsesAPI(this.formId).then(res => {
-      console.log(res)
       this.formSumData=res.data
       res.data.forEach((item)=> {
         let objData = {
@@ -148,6 +147,9 @@ export default {
         objData.pepole.phone = item.mapped_values.phone.value[0]
         objData.pepole.supplies_name = item.mapped_values.supplies_name.value[0]
         objData.pepole.supplies_time = item.mapped_values.supplies_time.value[0]
+        if (item.mapped_values.retrunReject){
+          objData.pepole.retrunReject = item.mapped_values.retrunReject.value[0]
+        }
         for (let y = 0; y < item.entries.length; y++) {
           //  对象的图片路径
           if (item.entries[y].attachment) {
@@ -254,7 +256,6 @@ export default {
         };
       }
       api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
-        console.log(res)
         this.show=false
         this.formSumData=res.data
         res.data.entries.forEach(item=>{
@@ -286,7 +287,7 @@ export default {
               }
             })
           }
-          if (item.identity_key==='return'){
+          if (item.identity_key==='retrunReject'){
             obj.rejectDescId=item.id
           }
         })
@@ -330,7 +331,6 @@ export default {
         }
         //退回请求
         api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
-          console.log(res)
           this.show=false
           this.formSumData=res.data
           res.data.entries.forEach(item=>{
