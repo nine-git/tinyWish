@@ -57,10 +57,11 @@
         <van-field label="心愿描述：" readonly type="text" v-model="formData.pepole.wishdesc" />
         <van-field label="家庭住址：" readonly type="text" v-model="formData.pepole.familyAddr" />
         <van-field label="家庭情况：" readonly type="text" v-model="formData.pepole.familyDesc" />
+        <van-field v-if="formData.audit.status==='已退回'" label="退回原因：" readonly type="text" v-model="formData.pepole.rejectdesc" />
         <van-field v-if="formData.audit.status==='待审核'" autosize label="回退理由："  type="textarea" v-model="myTextArea" />
         <p class="textNum" v-if="myTextArea.length<=maxtext&&formData.audit.status==='待审核'">{{myTextArea.length||0}}/{{maxtext}}</p>
         <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.status==='待审核'"><span :style="{ color:'red' }">{{myTextArea.length||0}}</span>/200</p>
-        <div class="claimBtn" v-if="formData.audit.status==='待审核'">
+         <div class="claimBtn" v-if="formData.audit.status==='待审核'">
           <div class="primary" @click="pass">通过</div>
           <div class="danger" @click="nopass">退回</div>
         </div>
@@ -179,7 +180,6 @@ export default {
         };
       }
       api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
-        console.log(res)
         this.show=false
         this.formSumData=res.data
         res.data.entries.forEach(item=>{
@@ -255,7 +255,6 @@ export default {
         }
         //退回请求
         api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
-          console.log(res)
           this.show=false
           this.formSumData=res.data
           res.data.entries.forEach(item=>{
@@ -276,7 +275,6 @@ export default {
       this.show = true;
       this.formData=arr
     },
-
     //  重构时间（时间格式，时间）
     dateFormat(fmt, date) {
       var date = new Date(date);
@@ -345,6 +343,9 @@ export default {
         objData.pepole.familyDesc = item.mapped_values.familydesc.value[0]
         objData.pepole.tel = item.mapped_values.tel.value[0]
         objData.pepole.idCard = item.mapped_values.idcard.value[0]
+        if (item.mapped_values.rejectdesc){
+          objData.pepole.rejectdesc = item.mapped_values.rejectdesc.value[0]
+        }
         for (let y = 0; y < item.entries.length; y++) {
           //  对象的图片路径
           if (item.entries[y].attachment) {
