@@ -2,26 +2,29 @@
   <div class="claim">
     <claim-header :title="title"></claim-header>
     <div class="main">
-      <div :key="item.id" @click=" claim(item)" class="main_item" v-for="item in list">
+      <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in list">
         <img :src="item.img" alt class="main_img" />
         <p v-if="item.mapped_values.name">
-          {{item.mapped_values.name.exported_value[0]}}的心愿：
-          <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+          {{ item.mapped_values.name.exported_value[0] }}的心愿：
+          <span>{{ item.mapped_values.wishdesc.exported_value[0] }}</span>
         </p>
-        <p v-if="item.time">{{item.time}}</p>
+        <p v-if="item.time">{{ item.time }}</p>
         <button class="mian_button button">
           <span v-if="item.mapped_values.claimstatus">
             <span
               class="claiming"
-              v-if="item.mapped_values.claimstatus.exported_value[0] == '待认领'"
+              v-if="
+                item.mapped_values.claimstatus.exported_value[0] == '待认领'"
             >待认领</span>
             <span
               class="complete"
-              v-if="item.mapped_values.claimstatus.exported_value[0] == '已完成'"
+              v-if="
+                item.mapped_values.claimstatus.exported_value[0] == '已完成'"
             >已完成</span>
             <span
               class="claimed"
-              v-if="item.mapped_values.claimstatus.exported_value[0] == '已认领'"
+              v-if="
+                item.mapped_values.claimstatus.exported_value[0] == '已认领'"
             >已认领</span>
           </span>
           <span class="claiming" v-else>待认领</span>
@@ -29,7 +32,7 @@
       </div>
     </div>
     <van-popup
-      :style="{ height: '80%',width:'80%' }"
+      :style="{ height: '80%', width: '80%' }"
       close-icon="close"
       closeable
       round
@@ -46,25 +49,25 @@
         <div v-if="!fromData.claimer">
           <div :key="item.identity_key" v-for="item in tableData">
             <div v-if="item.type === 'Field::TextField'">
-              <p v-if="item.identity_key ==='claimer'">
+              <p v-if="item.identity_key === 'claimer'">
                 <van-field
-                  :label="item.title +'：'"
+                  :label="item.title + '：'"
                   placeholder="请输入"
                   type="text"
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimphone'">
+              <p v-else-if="item.identity_key === 'claimphone'">
                 <van-field
-                  :label="item.title +'：'"
+                  :label="item.title + '：'"
                   placeholder="请输入"
                   type="text"
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimcompany'">
+              <p v-else-if="item.identity_key === 'claimcompany'">
                 <van-field
-                  :label="item.title +'：'"
+                  :label="item.title + '：'"
                   placeholder="请输入"
                   type="text"
                   v-model="item.value"
@@ -82,13 +85,13 @@
           <!-- 交接模块 -->
           <div v-if="!fromData.finishdesc">
             <div :key="item.identity_key" v-for="item in tableData">
-              <div v-if="item.identity_key ==='finishphoto'">
+              <div v-if="item.identity_key === 'finishphoto'">
                 <p class="finishphoto">上传交接图片：</p>
                 <van-uploader :after-read="afterRead" />
               </div>
-              <p v-if="item.identity_key ==='finishdesc'">
+              <p v-if="item.identity_key === 'finishdesc'">
                 <van-field
-                  :label="item.title +'：'"
+                  :label="item.title + '：'"
                   placeholder="请输入"
                   type="text"
                   v-model="item.value"
@@ -111,88 +114,102 @@
 </template>
 
 <script>
-import claimHeader from '../component/header'
-import api from '../../api/api'
-import unit from '@/api/unit'
+import claimHeader from "../component/header";
+import api from "../../api/api";
+import unit from "@/api/unit";
 
 export default {
-  name: 'wish',
-  data () {
+  name: "wish",
+  data() {
     return {
-      title: '认领心愿',
+      title: "认领心愿",
       list: [],
       show: false,
-      fromData: '',
-      fields: '',
-      orderFieldList: ['claimer', 'claimphone', 'claimcompany', 'claimstatus', 'finishphoto', 'finishdesc', 'finishdatetime'],
+      fromData: "",
+      fields: "",
+      orderFieldList: [
+        "claimer",
+        "claimphone",
+        "claimcompany",
+        "claimstatus",
+        "finishphoto",
+        "finishdesc",
+        "finishdatetime"
+      ],
       tableData: [],
-      date: '',
-      dataID: '',
-      option_id: '',
-      uptoken: ''
-    }
+      date: "",
+      dataID: "",
+      option_id: "",
+      uptoken: ""
+    };
   },
   components: {
     claimHeader
   },
-  mounted () {
-    document.title = '认领心愿'
+  mounted() {
+    document.title = "认领心愿";
     api.getFormsResponsesAPI(328).then(res => {
-      res = res.data
+      res = res.data;
       res.forEach(element => {
         if (element.mapped_values.auditstatus) {
-          if (element.mapped_values.auditstatus.exported_value[0] === '已通过') {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
-            element.time = element.created_at.slice(0, 10)
-            this.list.push(element)
+          if (
+            element.mapped_values.auditstatus.exported_value[0] === "已通过"
+          ) {
+            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
+              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+                1,
+              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+            );
+            element.time = element.created_at.slice(0, 10);
+            this.list.push(element);
           }
         }
-      })
-    })
+      });
+    });
     api.getFormsAPI(328).then(res => {
-      this.fields = res.data.fields
-      this.tableData = unit.tableListData(this.fields, this.orderFieldList)
-    })
+      this.fields = res.data.fields;
+      this.tableData = unit.tableListData(this.fields, this.orderFieldList);
+    });
 
     api.getUptokenAPI().then(res => {
-      this.uptoken = res.data.uptoken
-    })
+      this.uptoken = res.data.uptoken;
+    });
   },
   methods: {
     // 文件的上传
-    afterRead (file) {
+    afterRead(file) {
       // 此时可以自行将文件上传至服务器
-      console.log(file)
+      console.log(file);
       let data = {
         token: this.uptoken,
         file: file,
-        'x:key': '1593596993542'
-      }
+        "x:key": "1593596993542"
+      };
       //  contentType:false,
       //  processData:false,
       //  cache: false,
 
       api.postQiNiuApi(data).then(res => {
-        console.log(res)
-      })
+        console.log(res);
+      });
     },
-    claim (el) {
+    claim(el) {
       el.entries.forEach(element => {
         if (element.field_id === 9190) {
-          console.log(element)
-          this.option_id = element.id
+          console.log(element);
+          this.option_id = element.id;
         }
-      })
+      });
 
-      this.show = true
-      this.dataID = el.id
+      this.show = true;
+      this.dataID = el.id;
       this.fromData = {
         img: el.img,
         name: el.mapped_values.name.exported_value[0],
         community: el.mapped_values.community.exported_value[0],
         familydesc: el.mapped_values.familydesc.exported_value[0],
         wishdesc: el.mapped_values.wishdesc.exported_value[0]
-      }
+      };
       if (el.mapped_values.claimer) {
         this.fromData = {
           img: el.img,
@@ -203,7 +220,7 @@ export default {
           claimer: el.mapped_values.claimer.exported_value[0],
           claimphone: el.mapped_values.claimphone.exported_value[0],
           claimcompany: el.mapped_values.claimcompany.exported_value[0]
-        }
+        };
       }
       if (el.mapped_values.finishphoto) {
         this.fromData = {
@@ -215,81 +232,87 @@ export default {
           claimer: el.mapped_values.claimer.exported_value[0],
           claimphone: el.mapped_values.claimphone.exported_value[0],
           claimcompany: el.mapped_values.claimcompany.exported_value[0],
-          finishphoto: el.mapped_values.finishphoto.exported_value[0].slice(el.mapped_values.finishphoto.exported_value[0].indexOf('（') + 1, el.mapped_values.finishphoto.exported_value[0].indexOf('）')),
+          finishphoto: el.mapped_values.finishphoto.exported_value[0].slice(
+            el.mapped_values.finishphoto.exported_value[0].indexOf("（") + 1,
+            el.mapped_values.finishphoto.exported_value[0].indexOf("）")
+          ),
           finishdesc: el.mapped_values.finishdesc.exported_value[0],
           finishdatetime: el.mapped_values.finishdatetime.exported_value[0]
-        }
+        };
       }
     },
 
-    send (data) {
+    send(data) {
       // 获取时间
-      this.date = unit.formatDateTime()
+      this.date = unit.formatDateTime();
       let payload = {
         response: { entries_attributes: [] }
         // user_id: 11
-      }
+      };
       data.forEach(element => {
-        if (element.value !== '') {
+        if (element.value !== "") {
           if (element.field_id !== 9190) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
-              value: element.value })
+              value: element.value
+            });
           }
         }
-      })
+      });
       // 自动填值
       payload.response.entries_attributes.push(
         {
           id: this.option_id,
           field_id: 9190,
-          option_id: 7361 },
+          option_id: 7361
+        },
         {
           field_id: 9270,
           value: this.date
-        })
-      console.log(payload)
+        }
+      );
+      console.log(payload);
       api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
         if (res.status === 200) {
-          this.$toast('认领成功 ✨')
-          this.$router.go(0)
+          this.$toast("认领成功 ✨");
+          this.$router.go(0);
         } else {
-          this.$toast('认领失败 >_<')
+          this.$toast("认领失败 >_<");
         }
-      })
+      });
     },
-    finish (data) {
-      this.date = unit.formatDateTime()
+    finish(data) {
+      this.date = unit.formatDateTime();
       let payload = {
         response: { entries_attributes: [] }
-      }
+      };
       data.forEach(element => {
-        if (element.value !== '') {
+        if (element.value !== "") {
           if (element.field_id !== 9190) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
-              value: element.value })
+              value: element.value
+            });
           }
         }
-      })
+      });
       // 自动填值
-      payload.response.entries_attributes.push(
-        {
-          field_id: 9202,
-          value: this.date
-        })
-      console.log(payload)
+      payload.response.entries_attributes.push({
+        field_id: 9202,
+        value: this.date
+      });
+      console.log(payload);
       api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
         if (res.status === 200) {
-          this.$toast('认领成功 ✨')
-          this.$router.go(0)
+          this.$toast("认领成功 ✨");
+          this.$router.go(0);
         } else {
-          this.$toast('认领失败 >_<')
+          this.$toast("认领失败 >_<");
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
