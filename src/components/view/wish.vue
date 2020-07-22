@@ -1,59 +1,71 @@
 <template>
-  <div>
-<!--    <div class="header">-->
-<!--      <div>-->
-<!--        <img src="@/assets/img/logo1.png" alt="">-->
-<!--        <img src="@/assets/img/logo2.png" alt="">-->
-<!--      </div>-->
-<!--      <p>微心愿征集墙</p>-->
-<!--    </div>-->
+  <div class="wish">
     <claim-header :title="title"></claim-header>
-    <div id="wishShow">
-      <div v-for="(item,i) in formData" class="wishContainer" @click="showPopup(i)">
-        <div class="wishImg">
-          <img :src=item.img_url alt="">
-        </div>
-        <div class="wishContent">
-          <P>{{item.pepole.name}}的心愿：{{item.pepole.wishdesc}}</P>
-          <p>{{item.creatTime}}</p>
-        </div>
-        <div v-if="item.audit.status==='待审核'" class="auditStatusFather">
-          <div class="info auditStatus">{{item.audit.status}}</div>
-        </div>
-        <div v-else-if="item.audit.status==='已通过'" class="auditStatusFather">
-          <div class="primary auditStatus">{{item.audit.status}}</div>
-        </div>
-        <div v-else-if="item.audit.status==='已退回'" class="auditStatusFather">
-          <div class="danger auditStatus">{{item.audit.status}}</div>
+    <div class="wishShow">
+      <van-tabs v-model="active">
+        <van-tab title="待审核">
+          <div v-for="(item) in auditFormData" class="wishContainer" @click="showPopup(item)">
+            <div class="wishImg">
+              <img :src=item.img_url alt="">
+            </div>
+            <div class="wishContent">
+              <P>{{item.pepole.name}}的心愿：{{item.pepole.wishdesc}}</P>
+              <p>{{item.creatTime}}</p>
+            </div>
+            <div class="info auditStatus">{{item.audit.status}}</div>
+          </div>
+        </van-tab>
+        <van-tab title="已通过">
+          <div v-for="(item,i) in passFormData" class="wishContainer" @click="showPopup(item)">
+            <div class="wishImg">
+              <img :src=item.img_url alt="">
+            </div>
+            <div class="wishContent">
+              <P>{{item.pepole.name}}的心愿：{{item.pepole.wishdesc}}</P>
+              <p>{{item.creatTime}}</p>
+            </div>
+            <div class="primary auditStatus">{{item.audit.status}}</div>
+          </div>
+        </van-tab>
+        <van-tab title="已退回">
+          <div v-for="(item,i) in unpassFormData" class="wishContainer" @click="showPopup(item)">
+            <div class="wishImg">
+              <img :src=item.img_url alt="">
+            </div>
+            <div class="wishContent">
+              <P>{{item.pepole.name}}的心愿：{{item.pepole.wishdesc}}</P>
+              <p>{{item.creatTime}}</p>
+            </div>
+            <div class="danger auditStatus">{{item.audit.status}}</div>
+          </div>
+        </van-tab>
+      </van-tabs>
+    </div>
+    <van-popup v-model="show"
+               closeable
+               close-icon="close"
+               :style="{ width:'80%' ,height:'80%'}"
+               class="myOverlay"
+               v-if="formData.id">
+      <p class="titleOverlay">心愿详情</p>
+      <div class="imgOverlay"><img :src=formData.img_url alt=""></div>
+      <div class="contentOverlay">
+        <van-field label="姓名：" readonly type="text" v-model="formData.pepole.name" />
+        <van-field label="联系电话：" readonly type="text" v-model="formData.pepole.tel" />
+        <van-field label="身份证号码：" readonly type="text" v-model="formData.pepole.idCard" />
+        <van-field label="所属社区：" readonly type="text" v-model="formData.pepole.community" />
+        <van-field label="心愿描述：" readonly type="text" v-model="formData.pepole.wishdesc" />
+        <van-field label="家庭住址：" readonly type="text" v-model="formData.pepole.familyAddr" />
+        <van-field label="家庭情况：" readonly type="text" v-model="formData.pepole.familyDesc" />
+        <van-field v-if="formData.audit.status==='待审核'" autosize label="回退理由："  type="textarea" v-model="myTextArea" />
+        <p class="textNum" v-if="myTextArea.length<=maxtext&&formData.audit.status==='待审核'">{{myTextArea.length||0}}/{{maxtext}}</p>
+        <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.status==='待审核'"><span :style="{ color:'red' }">{{myTextArea.length||0}}</span>/200</p>
+        <div class="claimBtn" v-if="formData.audit.status==='待审核'">
+          <div class="primary" @click="pass">通过</div>
+          <div class="danger" @click="nopass">退回</div>
         </div>
       </div>
-      <van-popup v-model="show"
-                 closeable
-                 close-icon="close"
-                 :style="{ width:'80%' ,height:'80%'}"
-                 class="myOverlay"
-                 v-if="formData[this.num]">
-        <p class="titleOverlay">心愿详情</p>
-        <div class="imgOverlay"><img :src=formData[this.num].img_url alt=""></div>
-        <div class="contentOverlay">
-          <van-field label="姓名：" readonly type="text" v-model="formData[this.num].pepole.name" />
-          <van-field label="联系电话：" readonly type="text" v-model="formData[this.num].pepole.tel" />
-          <van-field label="身份证号码：" readonly type="text" v-model="formData[this.num].pepole.idCard" />
-          <van-field label="所属社区：" readonly type="text" v-model="formData[this.num].pepole.community" />
-          <van-field label="心愿描述：" readonly type="text" v-model="formData[this.num].pepole.wishdesc" />
-          <van-field label="家庭住址：" readonly type="text" v-model="formData[this.num].pepole.familyAddr" />
-          <van-field label="家庭情况：" readonly type="text" v-model="formData[this.num].pepole.familyDesc" />
-          <van-field v-if="formData[num].audit.status==='待审核'" autosize label="回退理由："  type="textarea" v-model="myTextArea" />
-          <p class="textNum" v-if="myTextArea.length<=200&&formData[num].audit.status==='待审核'">{{myTextArea.length||0}}/200</p>
-          <p class="textNum" v-else-if="myTextArea.length>200&&formData[num].audit.status==='待审核'"><span :style="{ color:'red' }">{{myTextArea.length||0}}</span>/200</p>
-
-          <div class="claimBtn" v-if="formData[num].audit.status==='待审核'">
-            <div class="primary" @click="pass">通过</div>
-            <div class="danger" @click="nopass">退回</div>
-          </div>
-        </div>
-      </van-popup>
-    </div>
+    </van-popup>
   </div>
 </template>
 
@@ -68,13 +80,21 @@ export default {
   },
   data () {
     return {
+      maxtext:100,//退回原因最大字数限制
+      name:'',
+      active: 0,
       title: '心愿审核',
       myTextArea:'',//文本域的内容
-      num:0,//点击的第几条内容
       show: false,//弹出框展示
       formId: '328',//表单号
       formSumData:[],//所有的数据
-      formData: [],//重构对象的容器
+      formData: {
+        audit: {id:'',status: '', option_id: ''},
+        pepole: {name: '', field_id: ''},
+      },//点击当前对象
+      auditFormData:[],//待审核
+      passFormData:[],//已通过
+      unpassFormData:[],//已退回
       formNameData: [],//表单属性(表头的数据)
       //默认图片路径
       defaultwishphoto : "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596"
@@ -123,11 +143,11 @@ export default {
           })
         }
       })
-      if(this.formData[this.num].audit.id){
+      if(this.formData.audit.id){
         str = {"response": {
             "entries_attributes": [
               {
-                "id": this.formData[this.num].audit.id,
+                "id": this.formData.audit.id,
                 "option_id": obj.auditStatusOptionId  //审核状态的option_id
               },
               {
@@ -160,15 +180,15 @@ export default {
           }
         };
       }
-      api.putFormsAmendAPI(this.formId,this.formData[this.num].id,str).then(res=>{
+      api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
         console.log(res)
         this.show=false
         this.formSumData=res.data
         res.data.entries.forEach(item=>{
           if (item.value==="已通过"){
-            this.formData[this.num].audit.id=item.id
-            this.formData[this.num].audit.status=item.value
-            this.formData[this.num].audit.option_id=item.option_id
+            this.formData.audit.id=item.id
+            this.formData.audit.status=item.value
+            this.formData.audit.option_id=item.option_id
           }
         })
 
@@ -198,11 +218,11 @@ export default {
           }
         })
 
-        if(this.formData[this.num].audit.id){
+        if(this.formData.audit.id){
           str = {"response": {
               "entries_attributes": [
                 {
-                  "id": this.formData[this.num].audit.id,
+                  "id": this.formData.audit.id,
                   "option_id": obj.auditStatusOptionId  //审核状态的option_id
                 },
                 {
@@ -235,15 +255,16 @@ export default {
             }
           };
         }
-        api.putFormsAmendAPI(this.formId,this.formData[this.num].id,str).then(res=>{
+        //退回请求
+        api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
           console.log(res)
           this.show=false
           this.formSumData=res.data
           res.data.entries.forEach(item=>{
             if (item.value==="已退回"){
-              this.formData[this.num].audit.id=item.id
-              this.formData[this.num].audit.status=item.value
-              this.formData[this.num].audit.option_id=item.option_id
+              this.formData.audit.id=item.id
+              this.formData.audit.status=item.value
+              this.formData.audit.option_id=item.option_id
             }
           })
 
@@ -253,9 +274,9 @@ export default {
         this.$toast.fail('没有退回原因，失败')
       }
     },
-    showPopup(num) {
+    showPopup(arr) {
       this.show = true;
-      this.num=num
+      this.formData=arr
     },
 
     //  重构时间（时间格式，时间）
@@ -281,18 +302,17 @@ export default {
     }
   },
   beforeCreate () {
+    //获取心愿表单数据
     api.getFormsAPI('328').then((res) => {
-      console.log(res)
       this.formNameData = res.data.fields
     })
     //  获取心愿审核的数据
     api.getFormsResponsesAPI('328').then((res) => {
-      console.log(res)
       this.formSumData=res.data
       res.data.forEach((item,i)=> {
         let objData = {
           id: '',
-          audit: {status: '', option_id: ''},
+          audit: {id:'',status: '', option_id: ''},
           pepole: {name: '', field_id: ''},
           creatTime: '',
           img_url: '',
@@ -308,7 +328,6 @@ export default {
           objData.audit.option_id = item.mapped_values.auditstatus.value[0].id
         }else{
           objData.audit.status = '待审核'
-          console.log(this.formNameData)
           this.formNameData.forEach(item=>{
             if (item.identity_key==='auditstatus'){
               item.options.forEach(item=>{
@@ -348,15 +367,20 @@ export default {
         if (!objData.img_url){
           objData.img_url=this.defaultwishphoto
         }
-        this.formData.push(objData)
+        if (objData.audit.status==="待审核"){
+          this.auditFormData.push(objData)
+        } else if (objData.audit.status==="已通过"){
+          this.passFormData.push(objData)
+        } else if (objData.audit.status==="已退回"){
+          this.unpassFormData.push(objData)
+        }
       })
-      this.formData.sort(function(a,b){
-        // order是规则
-        var order = ["待审核", "已通过", "已退回"];
-        return order.indexOf(a.audit.status) - order.indexOf(b.audit.status);
-      });
+      // this.formData.sort(function(a,b){
+      //   // order是规则
+      //   var order = ["待审核", "已通过", "已退回"];
+      //   return order.indexOf(a.audit.status) - order.indexOf(b.audit.status);
+      // });
     })
-
   }
 }
 </script>
@@ -371,97 +395,101 @@ export default {
   .danger{
     background-color: #d5501f;
   }
-  #wishShow{
-    font-size: 14px;
-    width: 100%;
-    text-align: left;
-    display: flex;
-    flex-wrap: wrap;
-    .wishContainer{
+  .wishShow {
+    margin: 1rem auto;
+    .van-tab__pane {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .van-tabs {
+      width: 100%;
+    }
+    .wishContainer {
       width: 50%;
-      padding: 1rem 0 1rem;
-      .wishImg{
-        width: 140px;
-        height: 120px;
-        margin: 0 auto;
+      position: relative;
+      padding: 1rem 0px 4rem;
+
+      .wishImg {
         img{
-          width: 100%;
-          height: 100%;
-          border-radius: 10px;
+          width: 14rem;
+          height: 12rem;
+          border-radius: 1rem;
+          margin-bottom: 1rem;
         }
       }
       .wishContent{
-        padding: 5px 18px;
-        p:first-child{
-          height: 42px;
+        p {
+          font-size: 1.4rem;
+          line-height: 2rem;
+          margin: 0.5rem 2.2rem;
+          text-align: left;
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
-          -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
-          word-wrap:break-word;
-          word-break:break-all;
+          -webkit-box-orient: vertical;
         }
-
       }
-      .auditStatusFather{
+      .auditStatus {
+        color: #fff;
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0.5rem auto;
+        border-radius: 2rem;
+        border: none;
+        display: block;
+        line-height: 3rem;
         width: 80%;
-        margin: 0 auto;
-        .auditStatus{
-          display: inline-block;
-          text-align: center;
-          border-radius: 5px;
-          width: 100%;
-          margin: 5px 0;
+        padding: 3px 0;
+      }
+
+
+    }
+  }
+  .myOverlay{
+    border-radius: 20px;
+    padding: 20px 10px;
+    .titleOverlay{
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 40px;
+    }
+    .imgOverlay{
+      width: 140px;
+      height: 120px;
+      margin: 0 auto;
+      img{
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+      }
+    }
+    .contentOverlay{
+      p{
+        margin-bottom: 5px;
+      }
+      .textNum{
+        text-align: right;
+        margin-right: 20px;
+      }
+      .claimBtn{
+        display: flex;
+        justify-content: space-around;
+        div{
+          width: 30%;
           height: 30px;
           line-height: 30px;
+          text-align: center;
           color: white;
         }
       }
-
     }
-    .myOverlay{
-      border-radius: 20px;
-      padding: 20px 10px;
-      .titleOverlay{
-        font-size: 16px;
-        font-weight: 600;
-        text-align: center;
-        line-height: 40px;
-      }
-      .imgOverlay{
-        width: 140px;
-        height: 120px;
-        margin: 0 auto;
-        img{
-          width: 100%;
-          height: 100%;
-          border-radius: 10px;
-        }
-      }
-      .contentOverlay{
-        p{
-          margin-bottom: 5px;
-        }
-        .textNum{
-          text-align: right;
-          margin-right: 20px;
-        }
-        .claimBtn{
-          display: flex;
-          justify-content: space-around;
-          div{
-            width: 30%;
-            height: 30px;
-            line-height: 30px;
-            text-align: center;
-            color: white;
-          }
-        }
-      }
-    }
-/deep/ textarea, .van-field__control{
-  border: 1px solid rgba(165, 155, 155, 0.5);
-}
+  }
+  /deep/ textarea, .van-field__control{
+    border: 1px solid rgba(165, 155, 155, 0.5);
   }
 </style>
