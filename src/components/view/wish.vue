@@ -80,9 +80,9 @@ export default {
   },
   data () {
     return {
+      title: '社区心愿审核',
       maxtext:100,//退回原因最大字数限制
       active: 0,
-      title: '心愿审核',
       myTextArea:'',//文本域的内容
       show: false,//弹出框展示
       formId: '328',//表单号
