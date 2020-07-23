@@ -10,6 +10,11 @@ export default [
     component: () => import(/* webpackChunkName:'wish' */'@/components/view/wish')
   },
   {
+    path: '/streetWish',
+    name: 'streetWish',
+    component: () => import(/* webpackChunkName:'wish' */'@/components/view/streetWish')
+  },
+  {
     path: '/claim',
     name: 'claim',
     component: () => import(/* webpackChunkName:'claim' */'@/components/view/claim')
@@ -18,6 +23,11 @@ export default [
     path: '/donation',
     name: 'donation',
     component: () => import(/* webpackChunkName:'donation' */'@/components/view/donation')
+  },
+  {
+    path: '/streetDonation',
+    name: 'streetDonation',
+    component: () => import(/* webpackChunkName:'wish' */'@/components/view/streetDonation')
   }
 
 ]
