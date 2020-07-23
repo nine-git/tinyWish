@@ -1,23 +1,20 @@
 <template>
   <div class="home">
-    <router-link class="wish" to="wish">社区个人心愿审核</router-link>
-    <router-link class="streetWish" to="streetWish">街道办个人心愿审核</router-link>
-    <router-link class="donation" to="donation">社区捐赠审核</router-link>
-    <router-link class="streetDonation" to="streetDonation">街道办捐赠审核</router-link>
-    <router-link class="claim" to="claim">我要认领心愿</router-link>
-    <router-link class="apply" to="apply">我要申领物资</router-link>
+    <router-link class="wish" to="/tiny_wish/wish">社区个人心愿审核</router-link>
+    <router-link class="streetWish" to="/tiny_wish/streetWish">街道办个人心愿审核</router-link>
+    <router-link class="donation" to="/tiny_wish/donation">社区捐赠审核</router-link>
+    <router-link class="streetDonation" to="/tiny_wish/streetDonation">街道办捐赠审核</router-link>
+    <router-link class="claim" to="/tiny_wish/claim">我要认领心愿</router-link>
+    <router-link class="apply" to="/tiny_wish/apply">我要申领物资</router-link>
   </div>
 </template>
 
 <script>
 export default {
-  data () {
-    return {
-
-    }
-  }
-
-}
+  data() {
+    return {};
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -27,7 +24,7 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: url('../../assets/img/bg.png');
+  background: url("../../assets/img/bg.png");
   background-size: cover;
 
   a {
