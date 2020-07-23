@@ -28,5 +28,16 @@ export default [
     name: "donation",
     component: () =>
       import(/* webpackChunkName:'donation' */ "@/components/view/donation")
+  },
+  {
+    path: '/streetWish',
+    name: 'streetWish',
+    component: () => import(/* webpackChunkName:'wish' */'@/components/view/streetWish')
+  },
+  {
+    path: '/streetDonation',
+    name: 'streetDonation',
+    component: () => import(/* webpackChunkName:'wish' */'@/components/view/streetDonation')
+
   }
 ];

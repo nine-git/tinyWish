@@ -1,7 +1,9 @@
 <template>
   <div class="home">
-    <router-link class="wish" to="wish">个人心愿审核</router-link>
-    <router-link class="donation" to="donation">捐赠审核</router-link>
+    <router-link class="wish" to="wish">社区个人心愿审核</router-link>
+    <router-link class="streetWish" to="streetWish">街道办个人心愿审核</router-link>
+    <router-link class="donation" to="donation">社区捐赠审核</router-link>
+    <router-link class="streetDonation" to="streetDonation">街道办捐赠审核</router-link>
     <router-link class="claim" to="claim">我要认领心愿</router-link>
     <router-link class="apply" to="apply">我要申领物资</router-link>
   </div>
