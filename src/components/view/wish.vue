@@ -61,7 +61,7 @@
         <van-field v-if="formData.audit.status==='待审核'" autosize label="回退理由："  type="textarea" v-model="myTextArea" />
         <p class="textNum" v-if="myTextArea.length<=maxtext&&formData.audit.status==='待审核'">{{myTextArea.length||0}}/{{maxtext}}</p>
         <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.status==='待审核'"><span :style="{ color:'red' }">{{myTextArea.length||0}}</span>/200</p>
-        <div class="claimBtn" v-if="formData.audit.status==='待审核'">
+         <div class="claimBtn" v-if="formData.audit.status==='待审核'">
           <div class="primary" @click="pass">通过</div>
           <div class="danger" @click="nopass">退回</div>
         </div>
@@ -71,8 +71,41 @@
 </template>
 
 <script>
+<<<<<<< HEAD
   import api from '@/api/api'
   import claimHeader from '../component/header'
+=======
+import api from '@/api/api'
+import claimHeader from '../component/header'
+export default {
+  name: 'wish',
+  components:{
+    claimHeader
+  },
+  data () {
+    return {
+      title: '社区心愿审核',
+      maxtext:100,//退回原因最大字数限制
+      active: 0,
+      myTextArea:'',//文本域的内容
+      show: false,//弹出框展示
+      formId: '328',//表单号
+      formSumData:[],//所有的数据
+      formData: {
+        audit: {id:'',status: '', option_id: ''},
+        pepole: {name: '', field_id: ''},
+      },//点击当前对象
+      auditFormData:[],//待审核
+      passFormData:[],//已通过
+      unpassFormData:[],//已退回
+      formNameData: [],//表单属性(表头的数据)
+      //默认图片路径
+      defaultwishphoto : "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596"
+    }
+  },
+  watch:{
+    myTextArea(){
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
 
   export default {
     name: 'wish',
@@ -99,9 +132,22 @@
         //默认图片路径
         defaultwishphoto: "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596"
       }
+<<<<<<< HEAD
     },
     watch: {
       myTextArea() {
+=======
+      api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
+        this.show=false
+        this.formSumData=res.data
+        res.data.entries.forEach(item=>{
+          if (item.value==="已通过"){
+            this.formData.audit.id=item.id
+            this.formData.audit.status=item.value
+            this.formData.audit.option_id=item.option_id
+          }
+        })
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
 
       }
     },
@@ -182,6 +228,7 @@
             }
           };
         }
+<<<<<<< HEAD
         api.putFormsAmendAPI(this.formId, this.formData.id, str).then(res => {
           console.log(res)
           this.show = false
@@ -191,10 +238,22 @@
               this.formData.audit.id = item.id
               this.formData.audit.status = item.value
               this.formData.audit.option_id = item.option_id
+=======
+        //退回请求
+        api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
+          this.show=false
+          this.formSumData=res.data
+          res.data.entries.forEach(item=>{
+            if (item.value==="已退回"){
+              this.formData.audit.id=item.id
+              this.formData.audit.status=item.value
+              this.formData.audit.option_id=item.option_id
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
             }
           })
 
         })
+<<<<<<< HEAD
       },
       //回退的函数
       nopass() {
@@ -212,6 +271,71 @@
               item.options.forEach(item => {
                 if (item.value === '已退回') {
                   obj.auditStatusOptionId = item.id
+=======
+      }else{
+        //  没有退回原因
+        this.$toast.fail('没有退回原因，失败')
+      }
+    },
+    showPopup(arr) {
+      this.show = true;
+      this.formData=arr
+    },
+    //  重构时间（时间格式，时间）
+    dateFormat(fmt, date) {
+      var date = new Date(date);
+      var ret;
+      const opt = {
+        "Y+": date.getFullYear().toString(),        // 年
+        "m+": (date.getMonth() + 1).toString(),     // 月
+        "d+": date.getDate().toString(),            // 日
+        "H+": date.getHours().toString(),           // 时
+        "M+": date.getMinutes().toString(),         // 分
+        "S+": date.getSeconds().toString()          // 秒
+        // 有其他格式化字符需求可以继续添加，必须转化成字符串
+      };
+      for (var k in opt) {
+        ret = new RegExp("(" + k + ")").exec(fmt);
+        if (ret) {
+          fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+        };
+      };
+      return fmt;
+    }
+  },
+  beforeCreate () {
+    //获取心愿表单数据
+    api.getFormsAPI('328').then((res) => {
+      this.formNameData = res.data.fields
+    })
+    //  获取心愿审核的数据
+    api.getFormsResponsesAPI('328').then((res) => {
+      this.formSumData=res.data
+      res.data.forEach((item)=> {
+        let objData = {
+          id: '',
+          audit: {id:'',status: '', option_id: ''},
+          pepole: {name: '', field_id: ''},
+          creatTime: '',
+          img_url: '',
+        }
+
+        //  对象创建的时间
+        objData.creatTime = this.dateFormat("YYYY-mm-dd HH:MM", item.created_at)
+        //  对象的id
+        objData.id = item.id
+        //  对象的状态和option_id
+        if (item.mapped_values.auditstatus){
+          objData.audit.status = item.mapped_values.auditstatus.value[0].value
+          objData.audit.option_id = item.mapped_values.auditstatus.value[0].id
+        }else{
+          objData.audit.status = '待审核'
+          this.formNameData.forEach(item=>{
+            if (item.identity_key==='auditstatus'){
+              item.options.forEach(item=>{
+                if (item.value==='待审核'){
+                  objData.audit.option_id =item.id
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
                 }
               })
             }
@@ -277,6 +401,7 @@
           //  没有退回原因
           this.$toast.fail('没有退回原因，失败')
         }
+<<<<<<< HEAD
       },
       showPopup(arr) {
         this.show = true;
@@ -300,6 +425,24 @@
           ret = new RegExp("(" + k + ")").exec(fmt);
           if (ret) {
             fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+=======
+        //对象的心愿描述内容
+        objData.pepole.wishdesc = item.mapped_values.wishdesc.value[0]
+        objData.pepole.community = item.mapped_values.community.value[0].value
+        objData.pepole.familyAddr = item.mapped_values.familyaddr.value[0]
+        objData.pepole.familyDesc = item.mapped_values.familydesc.value[0]
+        objData.pepole.tel = item.mapped_values.tel.value[0]
+        objData.pepole.idCard = item.mapped_values.idcard.value[0]
+        if (item.mapped_values.rejectdesc){
+          objData.pepole.rejectdesc = item.mapped_values.rejectdesc.value[0]
+        }
+        for (let y = 0; y < item.entries.length; y++) {
+          //  对象的图片路径
+          if (item.entries[y].attachment) {
+            let str = item.entries[y].attachment.download_url
+            let url = str.slice(0, str.indexOf('?'))
+            objData.img_url = url
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
           }
           ;
         }

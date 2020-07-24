@@ -19,9 +19,12 @@ export default {
   getUptokenAPI () {
     return http.get(`/api/v4/attachments/uptoken?purpose=create_responses`)
   },
-
   // 上传7牛
   postQiNiuApi (data, headers) {
     return http.post('https://up.qbox.me/', data, headers)
+  },
+  // 获取获取初始字段
+  getClientApi(){
+    return http.get('/magnate/oauth', '')
   }
 }

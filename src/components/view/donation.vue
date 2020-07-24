@@ -76,6 +76,7 @@
 </template>
 
 <script>
+<<<<<<< HEAD
   import api from '@/api/api.js'
   import unit from '@/api/unit.js'
   import claimHeader from '../component/header'
@@ -121,6 +122,88 @@
             pepole: {name: '', field_id: ''},
             creatTime: '',
             img_url: '',
+=======
+import api from '@/api/api.js'
+import unit from '@/api/unit.js'
+import claimHeader from '../component/header'
+export default {
+  name: 'donation',
+  components:{
+    claimHeader
+  },
+  data () {
+    return {
+      maxtext:100,//退回原因最大字数限制
+      active: 0,
+      title:'社区捐赠审核',
+      myTextArea:'',//文本域的内容
+      show: false,//弹出框展示
+      formId: '334',//表单号
+      formSumData:[],//所有的数据
+      formData: {
+        audit: {id:'',status: '', option_id: ''},
+        pepole: {name: '', field_id: ''},
+      },//点击当前对象
+      auditFormData:[],//待审核
+      passFormData:[],//已通过
+      unpassFormData:[],//已退回
+      formNameData: [],//表单属性(表头的数据)
+      //默认图片路径
+      defaultwishphoto : "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596"
+    }
+  },
+  mounted () {
+    api.getFormsAPI(this.formId).then(res => {
+      this.formNameData = res.data.fields
+    })
+
+    api.getFormsResponsesAPI(this.formId).then(res => {
+      this.formSumData=res.data
+      res.data.forEach((item)=> {
+        let objData = {
+          id: '',
+          audit: {id:'',status: '', option_id: ''},
+          pepole: {name: '', field_id: ''},
+          creatTime: '',
+          img_url: '',
+        }
+        //  对象创建的时间
+        objData.creatTime = this.dateFormat("YYYY-mm-dd", item.created_at)
+        //  对象的id
+        objData.id = item.id
+        //  对象的状态和option_id
+        if (item.mapped_values.review_state){
+          objData.audit.status = item.mapped_values.review_state.value[0].value
+          objData.audit.option_id = item.mapped_values.review_state.value[0].id
+        }else{
+          objData.audit.status = '待审核'
+          this.formNameData.forEach(item=>{
+            if (item.identity_key==='"review_state"'){
+              item.options.forEach(item=>{
+                if (item.value==='待审核'){
+                  objData.audit.option_id =item.id
+                }
+              })
+            }
+          })
+          objData.audit.id = ''
+        }
+        //对象的捐赠描述内容
+        objData.pepole.company = item.mapped_values.company.value[0]
+        objData.pepole.company_address = item.mapped_values.company_address.value[0]
+        objData.pepole.phone = item.mapped_values.phone.value[0]
+        objData.pepole.supplies_name = item.mapped_values.supplies_name.value[0]
+        objData.pepole.supplies_time = item.mapped_values.supplies_time.value[0]
+        if (item.mapped_values.retrunReject){
+          objData.pepole.retrunReject = item.mapped_values.retrunReject.value[0]
+        }
+        for (let y = 0; y < item.entries.length; y++) {
+          //  对象的图片路径
+          if (item.entries[y].attachment) {
+            let str = item.entries[y].attachment.download_url
+            let url = str.slice(0, str.indexOf('?'))
+            objData.img_url = url
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
           }
           //  对象创建的时间
           objData.creatTime = this.dateFormat("YYYY-mm-dd", item.created_at)
@@ -174,12 +257,25 @@
           if (!objData.img_url){
             objData.img_url=this.defaultwishphoto
           }
+<<<<<<< HEAD
           if (objData.audit.status==="待审核"){
             this.auditFormData.push(objData)
           } else if (objData.audit.status==="已通过"){
             this.passFormData.push(objData)
           } else if (objData.audit.status==="已退回"){
             this.unpassFormData.push(objData)
+=======
+        };
+      }
+      api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
+        this.show=false
+        this.formSumData=res.data
+        res.data.entries.forEach(item=>{
+          if (item.value==="已通过"){
+            this.formData.audit.id=item.id
+            this.formData.audit.status=item.value
+            this.formData.audit.option_id=item.option_id
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
           }
         })
       })
@@ -213,6 +309,7 @@
               }
             })
           }
+<<<<<<< HEAD
           if (item.identity_key==='claim_state'){
             obj.handStatusId=item.id
             item.options.forEach(item=>{
@@ -220,6 +317,10 @@
                 obj.handStatusOptionId=item.id
               }
             })
+=======
+          if (item.identity_key==='retrunReject'){
+            obj.rejectDescId=item.id
+>>>>>>> b2ee20a0e763d7b7682e94dba69990a2201476cf
           }
         })
         if(this.formData.audit.id){
@@ -260,7 +361,6 @@
           };
         }
         api.putFormsAmendAPI(this.formId,this.formData.id,str).then(res=>{
-          console.log(res)
           this.show=false
           this.formSumData=res.data
           res.data.entries.forEach(item=>{
