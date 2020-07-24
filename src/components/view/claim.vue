@@ -149,7 +149,7 @@ export default {
         "claimstatus",
         "finishphoto",
         "finishdesc",
-        "finishdatetime"
+        "finishdatetime",
       ],
       tableData: [],
       date: "",
@@ -157,17 +157,17 @@ export default {
       option_id: "",
       uptoken: "",
       value_id: "",
-      active: 0
+      active: 0,
     };
   },
   components: {
-    claimHeader
+    claimHeader,
   },
   mounted() {
     document.title = "认领心愿";
-    api.getFormsResponsesAPI(328).then(res => {
+    api.getFormsResponsesAPI(328).then((res) => {
       res = res.data;
-      res.forEach(element => {
+      res.forEach((element) => {
         if (element.mapped_values.auditstatus) {
           if (
             element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
@@ -208,12 +208,12 @@ export default {
         }
       });
     });
-    api.getFormsAPI(328).then(res => {
+    api.getFormsAPI(328).then((res) => {
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
     });
 
-    api.getUptokenAPI().then(res => {
+    api.getUptokenAPI().then((res) => {
       this.uptoken = res.data.uptoken;
     });
   },
@@ -228,10 +228,10 @@ export default {
       let data = formData;
 
       let headers = {
-        "content-type": false
+        "content-type": false,
       };
 
-      api.postQiNiuApi(data, headers).then(res => {
+      api.postQiNiuApi(data, headers).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
           this.value_id = res.data.id;
@@ -241,7 +241,7 @@ export default {
       });
     },
     claim(el) {
-      el.entries.forEach(element => {
+      el.entries.forEach((element) => {
         if (element.field_id === 9190) {
           this.option_id = element.id;
         }
@@ -253,7 +253,7 @@ export default {
         name: el.mapped_values.name.exported_value[0],
         community: el.mapped_values.community.exported_value[0],
         familydesc: el.mapped_values.familydesc.exported_value[0],
-        wishdesc: el.mapped_values.wishdesc.exported_value[0]
+        wishdesc: el.mapped_values.wishdesc.exported_value[0],
       };
       if (el.mapped_values.claimer) {
         this.fromData = {
@@ -264,7 +264,7 @@ export default {
           wishdesc: el.mapped_values.wishdesc.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
           claimphone: el.mapped_values.claimphone.exported_value[0],
-          claimcompany: el.mapped_values.claimcompany.exported_value[0]
+          claimcompany: el.mapped_values.claimcompany.exported_value[0],
         };
       }
       if (el.mapped_values.finishphoto) {
@@ -282,7 +282,7 @@ export default {
             el.mapped_values.finishphoto.exported_value[0].indexOf("）")
           ),
           finishdesc: el.mapped_values.finishdesc.exported_value[0],
-          finishdatetime: el.mapped_values.finishdatetime.exported_value[0]
+          finishdatetime: el.mapped_values.finishdatetime.exported_value[0],
         };
       }
     },
@@ -291,14 +291,14 @@ export default {
       // 获取时间
       this.date = unit.formatDateTime();
       let payload = {
-        response: { entries_attributes: [] }
+        response: { entries_attributes: [] },
       };
-      data.forEach(element => {
+      data.forEach((element) => {
         if (element.value !== "") {
           if (element.field_id !== 9190) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
-              value: element.value
+              value: element.value,
             });
           }
         }
@@ -308,14 +308,14 @@ export default {
         {
           id: this.option_id,
           field_id: 9190,
-          option_id: 7361
+          option_id: 7361,
         },
         {
           field_id: 9270,
-          value: this.date
+          value: this.date,
         }
       );
-      api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
+      api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("认领成功 ✨");
           this.$router.go(0);
@@ -327,14 +327,14 @@ export default {
     finish(data) {
       this.date = unit.formatDateTime();
       let payload = {
-        response: { entries_attributes: [] }
+        response: { entries_attributes: [] },
       };
-      data.forEach(element => {
+      data.forEach((element) => {
         if (element.value !== "") {
           if (element.field_id !== 9190) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
-              value: element.value
+              value: element.value,
             });
           }
         }
@@ -343,20 +343,20 @@ export default {
       payload.response.entries_attributes.push(
         {
           field_id: 9202,
-          value: this.date
+          value: this.date,
         },
         {
           id: this.option_id,
           field_id: 9190,
-          option_id: 7362
+          option_id: 7362,
         },
         {
           field_id: 9189,
           value: "附件",
-          value_id: this.value_id
+          value_id: this.value_id,
         }
       );
-      api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
+      api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
           this.$router.go(0);
@@ -364,8 +364,8 @@ export default {
           this.$toast("上传失败 >_<");
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -400,6 +400,8 @@ export default {
       line-height: 2rem;
       margin: 0.5rem 2.2rem;
       text-align: left;
+      width: 14rem;
+      margin: 0.5rem auto;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -408,6 +410,7 @@ export default {
     }
 
     .mian_button {
+      width: 14rem;
       position: absolute;
       bottom: 5px;
       left: 50%;

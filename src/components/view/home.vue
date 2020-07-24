@@ -2,9 +2,9 @@
   <div class="home">
     <router-link class="wish" to="/tiny_wish/wish">社区个人心愿审核</router-link>
     <router-link class="streetWish" to="/tiny_wish/streetWish">街道办个人心愿审核</router-link>
+    <router-link class="claim" to="/tiny_wish/claim">我要认领心愿</router-link>
     <router-link class="donation" to="/tiny_wish/donation">社区捐赠审核</router-link>
     <router-link class="streetDonation" to="/tiny_wish/streetDonation">街道办捐赠审核</router-link>
-    <router-link class="claim" to="/tiny_wish/claim">我要认领心愿</router-link>
     <router-link class="apply" to="/tiny_wish/apply">我要申领物资</router-link>
   </div>
 </template>
@@ -34,6 +34,9 @@ export default {
     width: 50vw;
     color: #fff;
     border-radius: 30px;
+  }
+  .donation {
+    margin-top: 70px;
   }
 }
 </style>
