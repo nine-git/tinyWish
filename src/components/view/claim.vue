@@ -127,105 +127,134 @@
 </template>
 
 <script>
-import claimHeader from '../component/header'
-import api from '../../api/api'
-import unit from '@/api/unit'
+import claimHeader from "../component/header";
+import api from "../../api/api";
+import unit from "@/api/unit";
 
 export default {
-  name: 'wish',
-  data () {
+  name: "wish",
+  data() {
     return {
-      title: '认领心愿',
+      title: "认领心愿",
       claimedList: [],
       finishList: [],
       claimList: [],
       show: false,
-      fromData: '',
-      fields: '',
-      orderFieldList: ['claimer', 'claimphone', 'claimcompany', 'claimstatus', 'finishphoto', 'finishdesc', 'finishdatetime'],
+      fromData: "",
+      fields: "",
+      orderFieldList: [
+        "claimer",
+        "claimphone",
+        "claimcompany",
+        "claimstatus",
+        "finishphoto",
+        "finishdesc",
+        "finishdatetime",
+      ],
       tableData: [],
-      date: '',
-      dataID: '',
-      option_id: '',
-      uptoken: '',
-      value_id: '',
-      active: 0
-    }
+      date: "",
+      dataID: "",
+      option_id: "",
+      uptoken: "",
+      value_id: "",
+      active: 0,
+    };
   },
   components: {
-    claimHeader
+    claimHeader,
   },
-  mounted () {
-    document.title = '认领心愿'
-    api.getFormsResponsesAPI(328).then(res => {
-      res = res.data
-      res.forEach(element => {
+  mounted() {
+    document.title = "认领心愿";
+    api.getFormsResponsesAPI(328).then((res) => {
+      res = res.data;
+      res.forEach((element) => {
         if (element.mapped_values.auditstatus) {
-          if (element.mapped_values.auditstatus.exported_value[0] === '已通过' && element.mapped_values.claimstatus.exported_value[0] == '已认领') {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
-            element.time = element.created_at.slice(0, 10)
-            this.claimedList.push(element)
+          if (
+            element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
+            element.mapped_values.claimstatus.exported_value[0] === "已认领"
+          ) {
+            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
+              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+                1,
+              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+            );
+            element.time = element.created_at.slice(0, 10);
+            this.claimedList.push(element);
           }
-          if (element.mapped_values.auditstatus.exported_value[0] === '已通过' && element.mapped_values.claimstatus.exported_value[0] == '已完成') {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
-            element.time = element.created_at.slice(0, 10)
-            this.finishList.push(element)
+          if (
+            element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
+            element.mapped_values.claimstatus.exported_value[0] === "已完成"
+          ) {
+            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
+              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+                1,
+              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+            );
+            element.time = element.created_at.slice(0, 10);
+            this.finishList.push(element);
           }
-          if (element.mapped_values.auditstatus.exported_value[0] === '已通过' && element.mapped_values.claimstatus.exported_value[0] == '待认领') {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(element.mapped_values.wishphoto.exported_value[0].indexOf('（') + 1, element.mapped_values.wishphoto.exported_value[0].indexOf('）'))
-            element.time = element.created_at.slice(0, 10)
-            this.claimList.push(element)
+          if (
+            element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
+            element.mapped_values.claimstatus.exported_value[0] === "待认领"
+          ) {
+            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
+              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+                1,
+              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+            );
+            element.time = element.created_at.slice(0, 10);
+            this.claimList.push(element);
           }
         }
-      })
-    })
-    api.getFormsAPI(328).then(res => {
-      this.fields = res.data.fields
-      this.tableData = unit.tableListData(this.fields, this.orderFieldList)
-    })
+      });
+    });
+    api.getFormsAPI(328).then((res) => {
+      this.fields = res.data.fields;
+      this.tableData = unit.tableListData(this.fields, this.orderFieldList);
+    });
 
-    api.getUptokenAPI().then(res => {
-      this.uptoken = res.data.uptoken
-    })
+    api.getUptokenAPI().then((res) => {
+      this.uptoken = res.data.uptoken;
+    });
   },
   methods: {
     // 文件的上传
-    afterRead (file) {
-      let formData = new FormData()
+    afterRead(file) {
+      let formData = new FormData();
       // 此时可以自行将文件上传至服务器
-      formData.append('file', file.file)
-      formData.append('token', this.uptoken)
-      formData.append('x:key', '1597796993541')
-      let data = formData
+      formData.append("file", file.file);
+      formData.append("token", this.uptoken);
+      formData.append("x:key", "1597796993541");
+      let data = formData;
 
       let headers = {
-        'content-type': false
-      }
+        "content-type": false,
+      };
 
-      api.postQiNiuApi(data, headers).then(res => {
+      api.postQiNiuApi(data, headers).then((res) => {
         if (res.status === 200) {
-          this.$toast('上传成功 ✨')
-          this.value_id = res.data.id
+          this.$toast("上传成功 ✨");
+          this.value_id = res.data.id;
         } else {
-          this.$toast('网络波动，请再试一次')
+          this.$toast("网络波动，请再试一次");
         }
-      })
+      });
     },
-    claim (el) {
-      el.entries.forEach(element => {
+    claim(el) {
+      el.entries.forEach((element) => {
         if (element.field_id === 9190) {
-          this.option_id = element.id
+          this.option_id = element.id;
         }
-      })
-      this.show = true
-      this.dataID = el.id
+      });
+      this.show = true;
+      this.dataID = el.id;
       this.fromData = {
         img: el.img,
         name: el.mapped_values.name.exported_value[0],
         community: el.mapped_values.community.exported_value[0],
         familydesc: el.mapped_values.familydesc.exported_value[0],
-        wishdesc: el.mapped_values.wishdesc.exported_value[0]
-      }
+        wishdesc: el.mapped_values.wishdesc.exported_value[0],
+      };
       if (el.mapped_values.claimer) {
         this.fromData = {
           img: el.img,
@@ -235,8 +264,8 @@ export default {
           wishdesc: el.mapped_values.wishdesc.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
           claimphone: el.mapped_values.claimphone.exported_value[0],
-          claimcompany: el.mapped_values.claimcompany.exported_value[0]
-        }
+          claimcompany: el.mapped_values.claimcompany.exported_value[0],
+        };
       }
       if (el.mapped_values.finishphoto) {
         this.fromData = {
@@ -248,87 +277,96 @@ export default {
           claimer: el.mapped_values.claimer.exported_value[0],
           claimphone: el.mapped_values.claimphone.exported_value[0],
           claimcompany: el.mapped_values.claimcompany.exported_value[0],
-          finishphoto: el.mapped_values.finishphoto.exported_value[0].slice(el.mapped_values.finishphoto.exported_value[0].indexOf('（') + 1, el.mapped_values.finishphoto.exported_value[0].indexOf('）')),
+          finishphoto: el.mapped_values.finishphoto.exported_value[0].slice(
+            el.mapped_values.finishphoto.exported_value[0].indexOf("（") + 1,
+            el.mapped_values.finishphoto.exported_value[0].indexOf("）")
+          ),
           finishdesc: el.mapped_values.finishdesc.exported_value[0],
-          finishdatetime: el.mapped_values.finishdatetime.exported_value[0]
-        }
+          finishdatetime: el.mapped_values.finishdatetime.exported_value[0],
+        };
       }
     },
 
-    send (data) {
+    send(data) {
       // 获取时间
-      this.date = unit.formatDateTime()
+      this.date = unit.formatDateTime();
       let payload = {
-        response: { entries_attributes: [] }
-      }
-      data.forEach(element => {
-        if (element.value !== '') {
+        response: { entries_attributes: [] },
+      };
+      data.forEach((element) => {
+        if (element.value !== "") {
           if (element.field_id !== 9190) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
-              value: element.value })
+              value: element.value,
+            });
           }
         }
-      })
+      });
       // 自动填值
       payload.response.entries_attributes.push(
         {
           id: this.option_id,
           field_id: 9190,
-          option_id: 7361 },
+          option_id: 7361,
+        },
         {
           field_id: 9270,
-          value: this.date
-        })
-      api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
-        if (res.status === 200) {
-          this.$toast('认领成功 ✨')
-          this.$router.go(0)
-        } else {
-          this.$toast('认领失败 >_<')
+          value: this.date,
         }
-      })
+      );
+      api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+        if (res.status === 200) {
+          this.$toast("认领成功 ✨");
+          this.$router.go(0);
+        } else {
+          this.$toast("认领失败 >_<");
+        }
+      });
     },
-    finish (data) {
-      this.date = unit.formatDateTime()
+    finish(data) {
+      this.date = unit.formatDateTime();
       let payload = {
-        response: { entries_attributes: [] }
-      }
-      data.forEach(element => {
-        if (element.value !== '') {
+        response: { entries_attributes: [] },
+      };
+      data.forEach((element) => {
+        if (element.value !== "") {
           if (element.field_id !== 9190) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
-              value: element.value })
+              value: element.value,
+            });
           }
         }
-      })
+      });
       // 自动填值
       payload.response.entries_attributes.push(
         {
           field_id: 9202,
-          value: this.date
+          value: this.date,
         },
         {
           id: this.option_id,
           field_id: 9190,
-          option_id: 7362 },
+          option_id: 7362,
+        },
         {
           field_id: 9189,
-          value: '附件',
-          value_id: this.value_id
-        })
-      api.putFormsAmendAPI(328, this.dataID, payload).then(res => {
-        if (res.status === 200) {
-          this.$toast('上传成功 ✨')
-          this.$router.go(0)
-        } else {
-          this.$toast('上传失败 >_<')
+          value: "附件",
+          value_id: this.value_id,
         }
-      })
-    }
-  }
-}
+      );
+      api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+        if (res.status === 200) {
+          this.$toast("上传成功 ✨");
+          this.$router.go(0);
+        } else {
+          this.$toast("上传失败 >_<");
+        }
+      });
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -362,6 +400,8 @@ export default {
       line-height: 2rem;
       margin: 0.5rem 2.2rem;
       text-align: left;
+      width: 14rem;
+      margin: 0.5rem auto;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -370,6 +410,7 @@ export default {
     }
 
     .mian_button {
+      width: 14rem;
       position: absolute;
       bottom: 5px;
       left: 50%;
