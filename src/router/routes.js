@@ -23,6 +23,7 @@ export default [
     component: () =>
       import(/* webpackChunkName:'apply' */ "@/components/view/apply")
   },
+
   {
     path: "/tiny_wish/donation",
     name: "donation",

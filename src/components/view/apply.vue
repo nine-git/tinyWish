@@ -3,12 +3,12 @@
     <claim-header :title="title"></claim-header>
     <div class="main">
       <van-tabs v-model="active">
-        <van-tab title="未被申领">
-          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimedList">
+        <van-tab title="未被认领">
+          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
             <img :src="item.img" alt class="main_img" />
             <p v-if="item.mapped_values.name">
-              {{item.mapped_values.name.exported_value[0]}}的心愿：
-              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+              {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
+              <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
             </p>
             <p v-if="item.time">{{item.time}}</p>
             <button class="mian_button button">
@@ -16,12 +16,12 @@
             </button>
           </div>
         </van-tab>
-        <!-- <van-tab title="已认领">
-          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
+        <van-tab title="已认领">
+          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimedList">
             <img :src="item.img" alt class="main_img" />
             <p v-if="item.mapped_values.name">
-              {{item.mapped_values.name.exported_value[0]}}的心愿：
-              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+              {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
+              <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
             </p>
             <p v-if="item.time">{{item.time}}</p>
             <button class="mian_button button">
@@ -33,15 +33,28 @@
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in finishList">
             <img :src="item.img" alt class="main_img" />
             <p v-if="item.mapped_values.name">
-              {{item.mapped_values.name.exported_value[0]}}的心愿：
-              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+              {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
+              <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
             </p>
             <p v-if="item.time">{{item.time}}</p>
             <button class="mian_button button">
               <span class="complete">已完成</span>
             </button>
           </div>
-        </van-tab>-->
+        </van-tab>
+        <van-tab title="已失效">
+          <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in loseList">
+            <img :src="item.img" alt class="main_img" />
+            <p v-if="item.mapped_values.name">
+              {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
+              <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
+            </p>
+            <p v-if="item.time">{{item.time}}</p>
+            <button class="mian_button button">
+              <span class="complete">已失效</span>
+            </button>
+          </div>
+        </van-tab>
       </van-tabs>
     </div>
     <van-popup
@@ -54,12 +67,12 @@
       <div class="popup">
         <p class="popup_title">心愿详情</p>
         <img :src="fromData.img" alt class="popup_img" />
-        <van-field label="发起人：" readonly type="text" v-model="fromData.name" />
-        <van-field label="所属社区：" readonly type="text" v-model="fromData.community" />
-        <van-field label="家庭情况：" readonly type="text" v-model="fromData.familydesc" />
-        <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishdesc" />
+        <van-field label="企业：" readonly type="text" v-model="fromData.company" />
+        <van-field label="联系人：" readonly type="text" v-model="fromData.name" />
+        <van-field autosize label="联系电话：" readonly v-model="fromData.phone" />
+        <van-field label="物资名称：" readonly type="text" v-model="fromData.supplies_name" />
 
-        <div v-if="!fromData.claimer">
+        <div v-if="!fromData.claim_state">
           <div :key="item.identity_key" v-for="item in tableData">
             <div v-if="item.type === 'Field::TextField'">
               <p v-if="item.identity_key ==='claimer'">
@@ -70,7 +83,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimphone'">
+              <p v-else-if="item.identity_key ==='claim_phone'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -78,7 +91,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimcompany'">
+              <p v-else-if="item.identity_key ==='claim_time'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -92,8 +105,8 @@
         </div>
         <div v-else>
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
-          <van-field label="认领人电话：" readonly type="text" v-model="fromData.claimphone" />
-          <van-field label="认领人单位：" readonly type="text" v-model="fromData.claimcompany" />
+          <van-field label="认领人电话：" readonly type="text" v-model="fromData.claim_phone" />
+          <van-field label="认领人单位：" readonly type="text" v-model="fromData.claim_time" />
 
           <!-- 交接模块 -->
           <div v-if="!fromData.finishdesc">
@@ -137,18 +150,19 @@ export default {
       claimedList: [],
       finishList: [],
       claimList: [],
+      loseList: [],
       show: false,
       fromData: "",
       fromId: 334,
       fields: "",
       orderFieldList: [
         "claimer",
-        "claimphone",
-        "claimcompany",
-        "claimstatus",
-        "finishphoto",
-        "finishdesc",
-        "finishdatetime",
+        "claim_state",
+        "claim_phone",
+        "claim_time",
+        "connect_img",
+        "connect_describe",
+        "connect_time",
       ],
       tableData: [],
       date: "",
@@ -168,10 +182,27 @@ export default {
       res = res.data;
       res.forEach((element) => {
         console.log(res);
-        if (element.mapped_values.review_state) {
+        // 返回物资的的状态
+        if (element.mapped_values.review_street_state) {
           if (
-            element.mapped_values.review_state.exported_value[0] === "已通过" &&
-            element.mapped_values.claim_state.exported_value[0] === "未被申领"
+            element.mapped_values.review_street_state.exported_value[0] ===
+              "已通过" &&
+            element.mapped_values.claim_state.exported_value[0] === "未被认领"
+          ) {
+            console.log(element);
+            element.img = element.mapped_values.supplies_img.exported_value[0].slice(
+              element.mapped_values.supplies_img.exported_value[0].indexOf(
+                "（"
+              ) + 1,
+              element.mapped_values.supplies_img.exported_value[0].indexOf("）")
+            );
+            element.time = element.created_at.slice(0, 10);
+            this.claimList.push(element);
+          }
+          if (
+            element.mapped_values.review_street_state.exported_value[0] ===
+              "已通过" &&
+            element.mapped_values.claim_state.exported_value[0] === "已认领"
           ) {
             element.img = element.mapped_values.supplies_img.exported_value[0].slice(
               element.mapped_values.supplies_img.exported_value[0].indexOf(
@@ -183,8 +214,9 @@ export default {
             this.claimedList.push(element);
           }
           if (
-            element.mapped_values.review_state.exported_value[0] === "已通过" &&
-            element.mapped_values.claim_state.exported_value[0] === "已申领"
+            element.mapped_values.review_street_state.exported_value[0] ===
+              "已通过" &&
+            element.mapped_values.claim_state.exported_value[0] === "已完成"
           ) {
             element.img = element.mapped_values.supplies_img.exported_value[0].slice(
               element.mapped_values.supplies_img.exported_value[0].indexOf(
@@ -196,8 +228,9 @@ export default {
             this.finishList.push(element);
           }
           if (
-            element.mapped_values.review_state.exported_value[0] === "已通过" &&
-            element.mapped_values.claim_state.exported_value[0] === "待失效"
+            element.mapped_values.review_street_state.exported_value[0] ===
+              "已通过" &&
+            element.mapped_values.claim_state.exported_value[0] === "已失效"
           ) {
             element.img = element.mapped_values.supplies_img.exported_value[0].slice(
               element.mapped_values.supplies_img.exported_value[0].indexOf(
@@ -206,15 +239,101 @@ export default {
               element.mapped_values.supplies_img.exported_value[0].indexOf("）")
             );
             element.time = element.created_at.slice(0, 10);
-            this.claimList.push(element);
+            this.loseList.push(element);
           }
         }
       });
     });
-    api.getFormsAPI(328).then((res) => {
+    api.getFormsAPI(this.fromId).then((res) => {
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
     });
+  },
+  methods: {
+    claim(el) {
+      el.entries.forEach((element) => {
+        if (element.field_id === 9190) {
+          this.option_id = element.id;
+        }
+      });
+      this.show = true;
+      this.dataID = el.id;
+      this.fromData = {
+        img: el.img,
+        company: el.mapped_values.company.exported_value[0],
+        name: el.mapped_values.name.exported_value[0],
+        phone: el.mapped_values.phone.exported_value[0],
+        supplies_name: el.mapped_values.supplies_name.exported_value[0],
+      };
+      if (el.mapped_values.claimer) {
+        this.fromData = {
+          img: el.img,
+          name: el.mapped_values.name.exported_value[0],
+          community: el.mapped_values.community.exported_value[0],
+          familydesc: el.mapped_values.familydesc.exported_value[0],
+          wishdesc: el.mapped_values.wishdesc.exported_value[0],
+          claimer: el.mapped_values.claimer.exported_value[0],
+          claimphone: el.mapped_values.claimphone.exported_value[0],
+          claimcompany: el.mapped_values.claimcompany.exported_value[0],
+        };
+      }
+      if (el.mapped_values.finishphoto) {
+        this.fromData = {
+          img: el.img,
+          name: el.mapped_values.name.exported_value[0],
+          community: el.mapped_values.community.exported_value[0],
+          familydesc: el.mapped_values.familydesc.exported_value[0],
+          wishdesc: el.mapped_values.wishdesc.exported_value[0],
+          claimer: el.mapped_values.claimer.exported_value[0],
+          claimphone: el.mapped_values.claimphone.exported_value[0],
+          claimcompany: el.mapped_values.claimcompany.exported_value[0],
+          finishphoto: el.mapped_values.finishphoto.exported_value[0].slice(
+            el.mapped_values.finishphoto.exported_value[0].indexOf("（") + 1,
+            el.mapped_values.finishphoto.exported_value[0].indexOf("）")
+          ),
+          finishdesc: el.mapped_values.finishdesc.exported_value[0],
+          finishdatetime: el.mapped_values.finishdatetime.exported_value[0],
+        };
+      }
+    },
+    send(data) {
+      console.log(data);
+      // 获取时间
+      this.date = unit.formatDateTime();
+      let payload = {
+        response: { entries_attributes: [] },
+      };
+      data.forEach((element) => {
+        if (element.value !== "") {
+          if (element.field_id !== 9190) {
+            payload.response.entries_attributes.push({
+              field_id: element.field_id,
+              value: element.value,
+            });
+          }
+        }
+      });
+      // 自动填值
+      payload.response.entries_attributes.push(
+        {
+          id: this.option_id,
+          field_id: 9190,
+          option_id: 7361,
+        },
+        {
+          field_id: 9270,
+          value: this.date,
+        }
+      );
+      api.putFormsAmendAPI(this.fromId, this.dataID, payload).then((res) => {
+        if (res.status === 200) {
+          this.$toast("认领成功 ✨");
+          this.$router.go(0);
+        } else {
+          this.$toast("认领失败 >_<");
+        }
+      });
+    },
   },
 };
 </script>
@@ -250,16 +369,17 @@ export default {
       line-height: 2rem;
       margin: 0.5rem 2.2rem;
       text-align: left;
+      width: 14rem;
+      margin: 0.5rem auto;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
     }
 
     .mian_button {
       position: absolute;
       bottom: 5px;
+      width: 14rem;
       left: 50%;
       transform: translateX(-50%);
       margin: 0.5rem auto;
