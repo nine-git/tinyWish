@@ -13,7 +13,7 @@ export default {
   },
   // 填写表单数据
   putFormsAmendAPI (tableID, dataID, data) {
-    return http.put(`api/v4/forms/${tableID}/responses/${dataID}`, data)
+    return http.put(`/api/v4/forms/${tableID}/responses/${dataID}`, data)
   },
   // 上传附件
   getUptokenAPI () {
@@ -23,8 +23,12 @@ export default {
   postQiNiuApi (data, headers) {
     return http.post('https://up.qbox.me/', data, headers)
   },
-  // 获取获取初始字段
+  // 获取初始字段
   getClientApi(){
     return http.get('/magnate/oauth', '')
+  },
+  //  微信通知
+  postPushWechat(){
+
   }
 }
