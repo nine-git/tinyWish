@@ -212,32 +212,31 @@ export default {
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
     });
-
-    api.getUptokenAPI().then((res) => {
-      this.uptoken = res.data.uptoken;
-    });
   },
   methods: {
     // 文件的上传
     afterRead(file) {
-      let formData = new FormData();
-      // 此时可以自行将文件上传至服务器
-      formData.append("file", file.file);
-      formData.append("token", this.uptoken);
-      formData.append("x:key", "1597796993541");
-      let data = formData;
+      api.getUptokenAPI().then((res) => {
+        this.uptoken = res.data.uptoken;
+        let formData = new FormData();
+        // 此时可以自行将文件上传至服务器
+        formData.append("file", file.file);
+        formData.append("token", this.uptoken);
+        formData.append("x:key", "1597796993541");
+        let data = formData;
 
-      let headers = {
-        "content-type": false,
-      };
+        let headers = {
+          "content-type": false,
+        };
 
-      api.postQiNiuApi(data, headers).then((res) => {
-        if (res.status === 200) {
-          this.$toast("上传成功 ✨");
-          this.value_id = res.data.id;
-        } else {
-          this.$toast("网络波动，请再试一次");
-        }
+        api.postQiNiuApi(data, headers).then((res) => {
+          if (res.status === 200) {
+            this.$toast("上传成功 ✨");
+            this.value_id = res.data.id;
+          } else {
+            this.$toast("网络波动，请再试一次");
+          }
+        });
       });
     },
     claim(el) {
