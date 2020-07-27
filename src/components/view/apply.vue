@@ -297,7 +297,7 @@ export default {
       }
     },
     send(data) {
-      console.log(data);
+      // console.log(data);
       // 获取时间
       this.date = unit.formatDateTime();
       let payload = {
@@ -305,7 +305,8 @@ export default {
       };
       data.forEach((element) => {
         if (element.value !== "") {
-          if (element.field_id !== 9190) {
+          // 修改认领状态
+          if (element.field_id !== 9262) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
               value: element.value,
@@ -317,11 +318,11 @@ export default {
       payload.response.entries_attributes.push(
         {
           id: this.option_id,
-          field_id: 9190,
-          option_id: 7361,
+          field_id: 9262,
+          option_id: 7384,
         },
         {
-          field_id: 9270,
+          field_id: 9269,
           value: this.date,
         }
       );
