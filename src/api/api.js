@@ -28,7 +28,7 @@ export default {
     return http.get('/magnate/oauth', '')
   },
   //  微信通知
-  postPushWechat(){
-
+  postPushWechat(data,headers){
+    return http.post('/api/v4/pushes/wechat', data, headers)
   }
 }

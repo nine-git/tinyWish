@@ -182,7 +182,18 @@
             })
             this.$toast("已通过");
             this.$router.go(0);
-
+            let headers = {
+              "content-type": "application/json",
+            };
+            let pushData={
+              "openids":"oQU491lD3XFpBjLD94ihZ92SmPUI",
+              "news_entity":
+                {
+                  "title":"微心愿",
+                  "description":"您的心愿已经通过啦",
+                  "picurl":"http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+                }
+            }
           } else {
             this.$toast("通过失败 >_<");
           }
