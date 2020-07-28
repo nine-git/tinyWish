@@ -8,7 +8,7 @@
             <img :src="item.img" alt class="main_img" />
             <p v-if="item.mapped_values.name">
               {{item.mapped_values.name.exported_value[0]}}的心愿：
-              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+              <span>{{item.mapped_values.wishDesc.exported_value[0]}}</span>
             </p>
             <p v-if="item.time">{{item.time}}</p>
             <button class="mian_button button">
@@ -21,7 +21,7 @@
             <img :src="item.img" alt class="main_img" />
             <p v-if="item.mapped_values.name">
               {{item.mapped_values.name.exported_value[0]}}的心愿：
-              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+              <span>{{item.mapped_values.wishDesc.exported_value[0]}}</span>
             </p>
             <p v-if="item.time">{{item.time}}</p>
             <button class="mian_button button">
@@ -34,7 +34,7 @@
             <img :src="item.img" alt class="main_img" />
             <p v-if="item.mapped_values.name">
               {{item.mapped_values.name.exported_value[0]}}的心愿：
-              <span>{{item.mapped_values.wishdesc.exported_value[0]}}</span>
+              <span>{{item.mapped_values.wishDesc.exported_value[0]}}</span>
             </p>
             <p v-if="item.time">{{item.time}}</p>
             <button class="mian_button button">
@@ -56,8 +56,8 @@
         <img :src="fromData.img" alt class="popup_img" />
         <van-field label="发起人：" readonly type="text" v-model="fromData.name" />
         <van-field label="所属社区：" readonly type="text" v-model="fromData.community" />
-        <van-field label="家庭情况：" readonly type="text" v-model="fromData.familydesc" />
-        <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishdesc" />
+        <van-field label="家庭情况：" readonly type="text" v-model="fromData.familydDesc" />
+        <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishDesc" />
 
         <div v-if="!fromData.claimer">
           <div :key="item.identity_key" v-for="item in tableData">
@@ -70,7 +70,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimphone'">
+              <p v-else-if="item.identity_key ==='claimPhone'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -78,7 +78,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimcompany'">
+              <p v-else-if="item.identity_key ==='claimCompany'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -92,17 +92,17 @@
         </div>
         <div v-else>
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
-          <van-field label="认领人电话：" readonly type="text" v-model="fromData.claimphone" />
-          <van-field label="认领人单位：" readonly type="text" v-model="fromData.claimcompany" />
+          <van-field label="认领人电话：" readonly type="text" v-model="fromData.claimPhone" />
+          <van-field label="认领人单位：" readonly type="text" v-model="fromData.claimCompany" />
 
           <!-- 交接模块 -->
-          <div v-if="!fromData.finishdesc">
+          <div v-if="!fromData.finishDesc">
             <div :key="item.identity_key" v-for="item in tableData">
-              <div v-if="item.identity_key ==='finishphoto'">
-                <p class="finishphoto">上传交接图片：</p>
+              <div v-if="item.identity_key ==='finishPhoto'">
+                <p class="finishPhoto">上传交接图片：</p>
                 <van-uploader :after-read="afterRead" />
               </div>
-              <p v-if="item.identity_key ==='finishdesc'">
+              <p v-if="item.identity_key ==='finishDesc'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -115,10 +115,10 @@
           </div>
           <div v-else>
             <p class="popup_img_title">交接照片：</p>
-            <img :src="fromData.finishphoto" alt class="popup_img" />
+            <img :src="fromData.finishPhoto" alt class="popup_img" />
 
-            <van-field label="交接描述：" readonly type="text" v-model="fromData.finishdesc" />
-            <van-field label="交接时间：" readonly type="text" v-model="fromData.finishdatetime" />
+            <van-field label="交接描述：" readonly type="text" v-model="fromData.finishDesc" />
+            <van-field label="交接时间：" readonly type="text" v-model="fromData.finishDateTime" />
           </div>
         </div>
       </div>
@@ -144,12 +144,12 @@ export default {
       fields: "",
       orderFieldList: [
         "claimer",
-        "claimphone",
-        "claimcompany",
-        "claimstatus",
-        "finishphoto",
-        "finishdesc",
-        "finishdatetime",
+        "claimPhone",
+        "claimCompany",
+        "claimStatus",
+        "finishPhoto",
+        "finishDesc",
+        "finishDateTime",
       ],
       tableData: [],
       date: "",
@@ -168,39 +168,39 @@ export default {
     api.getFormsResponsesAPI(328).then((res) => {
       res = res.data;
       res.forEach((element) => {
-        if (element.mapped_values.auditstatus) {
+        if (element.mapped_values.auditStatus) {
           if (
-            element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
-            element.mapped_values.claimstatus.exported_value[0] === "已认领"
+            element.mapped_values.auditStatus.exported_value[0] === "已通过" &&
+            element.mapped_values.claimStatus.exported_value[0] === "已认领"
           ) {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
-              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+            element.img = element.mapped_values.wishPhoto.exported_value[0].slice(
+              element.mapped_values.wishPhoto.exported_value[0].indexOf("（") +
                 1,
-              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+              element.mapped_values.wishPhoto.exported_value[0].indexOf("）")
             );
             element.time = element.created_at.slice(0, 10);
             this.claimedList.push(element);
           }
           if (
-            element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
-            element.mapped_values.claimstatus.exported_value[0] === "已完成"
+            element.mapped_values.auditStatus.exported_value[0] === "已通过" &&
+            element.mapped_values.claimStatus.exported_value[0] === "已完成"
           ) {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
-              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+            element.img = element.mapped_values.wishPhoto.exported_value[0].slice(
+              element.mapped_values.wishPhoto.exported_value[0].indexOf("（") +
                 1,
-              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+              element.mapped_values.wishPhoto.exported_value[0].indexOf("）")
             );
             element.time = element.created_at.slice(0, 10);
             this.finishList.push(element);
           }
           if (
-            element.mapped_values.auditstatus.exported_value[0] === "已通过" &&
-            element.mapped_values.claimstatus.exported_value[0] === "待认领"
+            element.mapped_values.auditStatus.exported_value[0] === "已通过" &&
+            element.mapped_values.claimStatus.exported_value[0] === "待认领"
           ) {
-            element.img = element.mapped_values.wishphoto.exported_value[0].slice(
-              element.mapped_values.wishphoto.exported_value[0].indexOf("（") +
+            element.img = element.mapped_values.wishPhoto.exported_value[0].slice(
+              element.mapped_values.wishPhoto.exported_value[0].indexOf("（") +
                 1,
-              element.mapped_values.wishphoto.exported_value[0].indexOf("）")
+              element.mapped_values.wishPhoto.exported_value[0].indexOf("）")
             );
             element.time = element.created_at.slice(0, 10);
             this.claimList.push(element);
@@ -251,37 +251,37 @@ export default {
         img: el.img,
         name: el.mapped_values.name.exported_value[0],
         community: el.mapped_values.community.exported_value[0],
-        familydesc: el.mapped_values.familydesc.exported_value[0],
-        wishdesc: el.mapped_values.wishdesc.exported_value[0],
+        familydDesc: el.mapped_values.familydDesc.exported_value[0],
+        wishDesc: el.mapped_values.wishDesc.exported_value[0],
       };
       if (el.mapped_values.claimer) {
         this.fromData = {
           img: el.img,
           name: el.mapped_values.name.exported_value[0],
           community: el.mapped_values.community.exported_value[0],
-          familydesc: el.mapped_values.familydesc.exported_value[0],
-          wishdesc: el.mapped_values.wishdesc.exported_value[0],
+          familydDesc: el.mapped_values.familydDesc.exported_value[0],
+          wishDesc: el.mapped_values.wishDesc.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
-          claimphone: el.mapped_values.claimphone.exported_value[0],
-          claimcompany: el.mapped_values.claimcompany.exported_value[0],
+          claimPhone: el.mapped_values.claimPhone.exported_value[0],
+          claimCompany: el.mapped_values.claimCompany.exported_value[0],
         };
       }
-      if (el.mapped_values.finishphoto) {
+      if (el.mapped_values.finishPhoto) {
         this.fromData = {
           img: el.img,
           name: el.mapped_values.name.exported_value[0],
           community: el.mapped_values.community.exported_value[0],
-          familydesc: el.mapped_values.familydesc.exported_value[0],
-          wishdesc: el.mapped_values.wishdesc.exported_value[0],
+          familydDesc: el.mapped_values.familydDesc.exported_value[0],
+          wishDesc: el.mapped_values.wishDesc.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
-          claimphone: el.mapped_values.claimphone.exported_value[0],
-          claimcompany: el.mapped_values.claimcompany.exported_value[0],
-          finishphoto: el.mapped_values.finishphoto.exported_value[0].slice(
-            el.mapped_values.finishphoto.exported_value[0].indexOf("（") + 1,
-            el.mapped_values.finishphoto.exported_value[0].indexOf("）")
+          claimPhone: el.mapped_values.claimPhone.exported_value[0],
+          claimCompany: el.mapped_values.claimCompany.exported_value[0],
+          finishPhoto: el.mapped_values.finishPhoto.exported_value[0].slice(
+            el.mapped_values.finishPhoto.exported_value[0].indexOf("（") + 1,
+            el.mapped_values.finishPhoto.exported_value[0].indexOf("）")
           ),
-          finishdesc: el.mapped_values.finishdesc.exported_value[0],
-          finishdatetime: el.mapped_values.finishdatetime.exported_value[0],
+          finishDesc: el.mapped_values.finishDesc.exported_value[0],
+          finishDateTime: el.mapped_values.finishDateTime.exported_value[0],
         };
       }
     },
@@ -433,7 +433,7 @@ export default {
     border-radius: 1rem;
   }
   .popup_img_title,
-  .finishphoto {
+  .finishPhoto {
     margin-top: 2rem;
     text-align: left;
     padding: 1rem 2rem;
