@@ -113,7 +113,7 @@
           <div v-if="!fromData.connect_img">
             <div :key="item.identity_key" v-for="item in tableData">
               <div v-if="item.identity_key ==='connect_img'">
-                <p class="finishphoto">上传交接图片：</p>
+                <p class="finishPhoto">上传交接图片：</p>
                 <van-uploader :after-read="afterRead" />
               </div>
               <p v-if="item.identity_key ==='connect_describe'">
@@ -472,7 +472,7 @@ export default {
     border-radius: 1rem;
   }
   .popup_img_title,
-  .finishphoto {
+  .finishPhoto {
     margin-top: 2rem;
     text-align: left;
     padding: 1rem 2rem;
