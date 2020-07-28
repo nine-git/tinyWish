@@ -65,7 +65,7 @@
       v-model="show"
     >
       <div class="popup">
-        <p class="popup_title">心愿详情</p>
+        <p class="popup_title">认领详情</p>
         <img :src="fromData.img" alt class="popup_img" />
         <van-field label="企业：" readonly type="text" v-model="fromData.company" />
         <van-field label="联系人：" readonly type="text" v-model="fromData.name" />
@@ -91,7 +91,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claimTime'">
+              <p v-else-if="item.identity_key ==='claim_time'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -104,10 +104,10 @@
           <button @click="send(tableData)" class="popup_button button">确认认领</button>
         </div>
         <!-- 待认领 -->
-        <div v-else>
+        <div v-else-if="fromData.claimer">
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
           <van-field label="认领人电话：" readonly type="text" v-model="fromData.claim_phone" />
-          <van-field label="认领时间：" readonly type="text" v-model="fromData.claimTime" />
+          <van-field label="认领时间：" readonly type="text" v-model="fromData.claim_time" />
 
           <!-- 交接模块 -->
           <div v-if="!fromData.connect_img">
@@ -160,7 +160,7 @@ export default {
         "claimer",
         "claim_state",
         "claim_phone",
-        "claimTime",
+        "claim_time",
         "connect_img",
         "connect_describe",
         "connect_time",
@@ -275,7 +275,6 @@ export default {
       });
     },
     claim(el) {
-      console.log(el);
       el.entries.forEach((element) => {
         if (element.field_id === 9262) {
           this.option_id = element.id;
@@ -283,37 +282,6 @@ export default {
       });
       this.show = true;
       this.dataID = el.id;
-      if (el.mapped_values.connect_img) {
-        this.fromData = {
-          img: el.img,
-          company: el.mapped_values.company.exported_value[0],
-          name: el.mapped_values.name.exported_value[0],
-          phone: el.mapped_values.phone.exported_value[0],
-          supplies_name: el.mapped_values.supplies_name.exported_value[0],
-          claimer: el.mapped_values.claimer.exported_value[0],
-          claim_phone: el.mapped_values.claim_phone.exported_value[0],
-          claimTime: el.mapped_values.claimTime.exported_value[0],
-          connect_img: el.mapped_values.connect_img.exported_value[0].slice(
-            el.mapped_values.connect_img.exported_value[0].indexOf("（") + 1,
-            el.mapped_values.connect_img.exported_value[0].indexOf("）")
-          ),
-          connect_describe: el.mapped_values.connect_describe.exported_value[0],
-          connect_time: el.mapped_values.connect_time.exported_value[0],
-        };
-        return;
-      } else if (el.mapped_values.claimer) {
-        this.fromData = {
-          img: el.img,
-          company: el.mapped_values.company.exported_value[0],
-          name: el.mapped_values.name.exported_value[0],
-          phone: el.mapped_values.phone.exported_value[0],
-          supplies_name: el.mapped_values.supplies_name.exported_value[0],
-          claimer: el.mapped_values.claimer.exported_value[0],
-          claim_phone: el.mapped_values.claim_phone.exported_value[0],
-          claimTime: el.mapped_values.claimTime.exported_value[0],
-        };
-        return;
-      }
       this.fromData = {
         img: el.img,
         company: el.mapped_values.company.exported_value[0],
@@ -321,6 +289,37 @@ export default {
         phone: el.mapped_values.phone.exported_value[0],
         supplies_name: el.mapped_values.supplies_name.exported_value[0],
       };
+      if (el.mapped_values.claimer) {
+        this.fromData = {
+          img: el.img,
+          company: el.mapped_values.company.exported_value[0],
+          name: el.mapped_values.name.exported_value[0],
+          phone: el.mapped_values.phone.exported_value[0],
+          supplies_name: el.mapped_values.supplies_name.exported_value[0],
+          claimer: el.mapped_values.claimer.exported_value[0],
+          claim_phone: el.mapped_values.claim_phone.exported_value[0],
+          claim_time: el.mapped_values.claim_time.exported_value[0],
+        };
+        if (el.mapped_values.connect_time) {
+          this.fromData = {
+            img: el.img,
+            company: el.mapped_values.company.exported_value[0],
+            name: el.mapped_values.name.exported_value[0],
+            phone: el.mapped_values.phone.exported_value[0],
+            supplies_name: el.mapped_values.supplies_name.exported_value[0],
+            claimer: el.mapped_values.claimer.exported_value[0],
+            claim_phone: el.mapped_values.claim_phone.exported_value[0],
+            claim_time: el.mapped_values.claim_time.exported_value[0],
+            connect_img: el.mapped_values.connect_img.exported_value[0].slice(
+              el.mapped_values.connect_img.exported_value[0].indexOf("（") + 1,
+              el.mapped_values.connect_img.exported_value[0].indexOf("）")
+            ),
+            connect_describe:
+              el.mapped_values.connect_describe.exported_value[0],
+            connect_time: el.mapped_values.connect_time.exported_value[0],
+          };
+        }
+      }
     },
     send(data) {
       // console.log(data);
