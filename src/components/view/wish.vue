@@ -453,10 +453,15 @@ export default {
       }
     }
     .wishContent {
+      width:  14rem;
+      margin: 0 auto;
+      p:first-child{
+        height: 40px;
+      }
       p {
         font-size: 1.4rem;
         line-height: 2rem;
-        margin: 0.5rem 2.2rem;
+        margin: 0.5rem 0;
         text-align: left;
         overflow: hidden;
         text-overflow: ellipsis;

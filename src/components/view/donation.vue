@@ -453,15 +453,17 @@ export default {
       }
     }
     .donationContent {
+      width:  14rem;
+      margin: 0 auto;
       p {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         line-height: 2rem;
-        margin: 0.5rem 2.2rem;
+        margin: 0.5rem 0;
         text-align: left;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
       }
     }
