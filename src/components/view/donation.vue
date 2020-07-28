@@ -260,8 +260,22 @@
                 })
               }
             })
-            this.$toast("已通过 ");
-            this.$router.go(0);
+            let headers = {
+              "content-type": "application/json",
+            };
+            let pushData={
+              "openids":res.data.user.openid,
+              "news_entity":
+                {
+                  "title":"微心愿",
+                  "description":"您的捐赠社区通过啦！",
+                  "picurl":"http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+                }
+            }
+            api.postPushWeChat(pushData, headers).then(res=>{
+              this.$toast("已通过");
+              this.$router.go(0);
+            })
           } else {
             this.$toast("通过失败 >_<");
           }
@@ -343,8 +357,22 @@
                   })
                 }
               })
-              this.$toast("已退回");
-              this.$router.go(0);
+              let headers = {
+                "content-type": "application/json",
+              };
+              let pushData={
+                "openids":res.data.user.openid,
+                "news_entity":
+                  {
+                    "title":"微心愿",
+                    "description":"不好意思，您的捐赠不满足捐赠条件！",
+                    "picurl":"http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+                  }
+              }
+              api.postPushWeChat(pushData, headers).then(res=>{
+                this.$toast("已退回");
+                this.$router.go(0);
+              })
             } else {
               this.$toast("退回失败 >_<");
             }

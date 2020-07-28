@@ -26,5 +26,9 @@ export default {
   // 获取获取初始字段
   getClientApi() {
     return http.get("/magnate/oauth", "");
+  },
+  // 微信通知消息
+  postPushWeChat(data, headers){
+    return http.post("/api/v4/pushes/wechat", data, headers)
   }
 };
