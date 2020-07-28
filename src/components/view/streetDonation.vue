@@ -14,7 +14,7 @@
               <p>发布时间：{{item.creatTime}}</p>
               <p>截止时间：{{item.pepole.supplies_time}}</p>
             </div>
-            <div class="info auditStatus">{{item.audit.status}}</div>
+            <div class="info auditStatus">{{item.audit.statusStreet}}</div>
           </div>
         </van-tab>
         <van-tab title="已通过">
@@ -28,7 +28,7 @@
               <p>发布时间：{{item.creatTime}}</p>
               <p>截止时间：{{item.pepole.supplies_time}}</p>
             </div>
-            <div class="primary auditStatus">{{item.audit.status}}</div>
+            <div class="primary auditStatus">{{item.audit.statusStreet}}</div>
           </div>
         </van-tab>
         <van-tab title="已退回">
@@ -42,7 +42,7 @@
               <p>发布时间：{{item.creatTime}}</p>
               <p>截止时间：{{item.pepole.supplies_time}}</p>
             </div>
-            <div class="danger auditStatus">{{item.audit.status}}</div>
+            <div class="danger auditStatus">{{item.audit.statusStreet}}</div>
           </div>
         </van-tab>
       </van-tabs>
@@ -67,14 +67,14 @@
         <van-field label="企业地址：" readonly type="text" v-model="formData.pepole.company_address" />
         <van-field label="截止时间：" readonly type="text" v-model="formData.pepole.supplies_time" />
         <van-field
-          v-if="formData.audit.status==='已退回'"
+          v-if="formData.audit.statusStreet==='已退回'"
           label="退回原因："
           readonly
           type="text"
           v-model="formData.pepole.retrunReject"
         />
         <van-field
-          v-if="formData.audit.status==='待审核'"
+          v-if="formData.audit.statusStreet==='待审核'"
           autosize
           label="回退理由："
           type="textarea"
@@ -82,13 +82,13 @@
         />
         <p
           class="textNum"
-          v-if="myTextArea.length<=maxtext&&formData.audit.status==='待审核'"
+          v-if="myTextArea.length<=maxtext&&formData.audit.statusStreet==='待审核'"
         >{{myTextArea.length||0}}/{{maxtext}}</p>
-        <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.status==='待审核'">
+        <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.statusStreet==='待审核'">
           <span :style="{ color:'red' }">{{myTextArea.length||0}}</span>
           /{{maxtext}}
         </p>
-        <div class="claimBtn" v-if="formData.audit.status==='待审核'">
+        <div class="claimBtn" v-if="formData.audit.statusStreet==='待审核'">
           <div class="primary" @click="pass">通过</div>
           <div class="danger" @click="nopass">退回</div>
         </div>
