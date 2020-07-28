@@ -1,34 +1,75 @@
 <template>
-  <div class="streetDonation">
-    <claim-header :title="title"></claim-header>
-    <div class="donationShow">
-      <van-tabs v-model="active">
-        <van-tab title="待审核">
-          <div v-for="(item) in auditFormData" class="donationContainer" @click="showPopup(item)">
-            <div class="donationImg">
-              <img :src="item.img_url" alt />
+    <div class="streetDonation">
+      <claim-header :title="title"></claim-header>
+      <div class="donationShow">
+        <van-tabs v-model="active">
+          <van-tab title="待审核">
+            <div v-for="(item) in auditFormData" class="donationContainer" @click="showPopup(item)">
+              <div class="donationImg">
+                <img :src=item.img_url alt="">
+              </div>
+              <div class="donationContent">
+                <P>捐赠者名称：{{item.pepole.name}}</P>
+                <p>捐赠物质名称：{{item.pepole.supplies_name}}</p>
+                <p>发布时间：{{item.creatTime}}</p>
+                <p>截止时间：{{item.pepole.supplies_time}}</p>
+              </div>
+              <div class="info auditStatus">{{item.audit.statusStreet}}</div>
             </div>
-            <div class="donationContent">
-              <P>捐赠者名称：{{item.pepole.name}}</P>
-              <p>捐赠物质名称：{{item.pepole.supplies_name}}</p>
-              <p>发布时间：{{item.creatTime}}</p>
-              <p>截止时间：{{item.pepole.supplies_time}}</p>
+          </van-tab>
+          <van-tab title="已通过">
+            <div v-for="(item) in passFormData" class="donationContainer" @click="showPopup(item)">
+              <div class="donationImg">
+                <img :src=item.img_url alt="">
+              </div>
+              <div class="donationContent">
+                <P>捐赠者名称：{{item.pepole.name}}</P>
+                <p>捐赠物质名称：{{item.pepole.supplies_name}}</p>
+                <p>发布时间：{{item.creatTime}}</p>
+                <p>截止时间：{{item.pepole.supplies_time}}</p>
+              </div>
+              <div class="primary auditStatus">{{item.audit.statusStreet}}</div>
             </div>
-            <div class="info auditStatus">{{item.audit.status}}</div>
-          </div>
-        </van-tab>
-        <van-tab title="已通过">
-          <div v-for="(item) in passFormData" class="donationContainer" @click="showPopup(item)">
-            <div class="donationImg">
-              <img :src="item.img_url" alt />
+          </van-tab>
+          <van-tab title="已退回">
+            <div v-for="(item) in unpassFormData" class="donationContainer" @click="showPopup(item)">
+              <div class="donationImg">
+                <img :src=item.img_url alt="">
+              </div>
+              <div class="donationContent">
+                <P>捐赠者名称：{{item.pepole.name}}</P>
+                <p>捐赠物质名称：{{item.pepole.supplies_name}}</p>
+                <p>发布时间：{{item.creatTime}}</p>
+                <p>截止时间：{{item.pepole.supplies_time}}</p>
+              </div>
+              <div class="danger auditStatus">{{item.audit.statusStreet}}</div>
             </div>
-            <div class="donationContent">
-              <P>捐赠者名称：{{item.pepole.name}}</P>
-              <p>捐赠物质名称：{{item.pepole.supplies_name}}</p>
-              <p>发布时间：{{item.creatTime}}</p>
-              <p>截止时间：{{item.pepole.supplies_time}}</p>
-            </div>
-            <div class="primary auditStatus">{{item.audit.status}}</div>
+          </van-tab>
+        </van-tabs>
+      </div>
+      <van-popup v-model="show"
+                 closeable
+                 close-icon="close"
+                 :style="{ width:'80%' ,height:'80%'}"
+                 class="myOverlay"
+                 v-if="formData.id">
+        <p class="titleOverlay">捐赠详情</p>
+        <div class="imgOverlay"><img :src=formData.img_url alt=""></div>
+        <div class="contentOverlay">
+          <van-field label="企业名称：" readonly type="text" v-model="formData.pepole.company" />
+          <van-field label="联系人：" readonly type="text" v-model="formData.pepole.name" />
+          <van-field label="联系电话：" readonly type="text" v-model="formData.pepole.phone" />
+          <van-field label="物质名称：" readonly type="text" v-model="formData.pepole.supplies_name" />
+          <van-field label="企业地址：" readonly type="text" v-model="formData.pepole.company_address" />
+          <van-field label="截止时间：" readonly type="text" v-model="formData.pepole.supplies_time" />
+          <van-field v-if="formData.audit.statusStreet==='已退回'" label="退回原因：" readonly type="text" v-model="formData.pepole.retrunReject" />
+          <van-field v-if="formData.audit.statusStreet==='待审核'" autosize label="回退理由："  type="textarea" v-model="myTextArea" />
+          <p class="textNum" v-if="myTextArea.length<=maxtext&&formData.audit.status==='待审核'">{{myTextArea.length||0}}/{{maxtext}}</p>
+          <p class="textNum" v-else-if="myTextArea.length>maxtext&&formData.audit.status==='待审核'"><span :style="{ color:'red' }">{{myTextArea.length||0}}</span>/{{maxtext}}</p>
+          <div class="claimBtn" v-if="formData.audit.statusStreet==='待审核'">
+            <div class="primary" @click="pass">通过</div>
+            <div class="danger" @click="nopass">退回</div>
+
           </div>
         </van-tab>
         <van-tab title="已退回">
@@ -317,6 +358,7 @@ export default {
                 }
               });
             }
+
           });
           let headers = {
             "content-type": "application/json",
