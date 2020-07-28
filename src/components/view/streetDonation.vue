@@ -191,9 +191,10 @@ export default {
           item.mapped_values.supplies_name.value[0];
         objData.pepole.supplies_time =
           item.mapped_values.supplies_time.value[0];
-        if (item.mapped_values.street_retrun_reject) {
+
+        if (item.mapped_values.streetAuditStatus) {
           objData.pepole.retrunReject =
-            item.mapped_values.street_retrun_reject.value[0];
+            item.mapped_values.streetAuditStatus.value[0];
         }
         for (let y = 0; y < item.entries.length; y++) {
           //  对象的图片路径
@@ -357,7 +358,8 @@ export default {
               }
             });
           }
-          if (item.identity_key === "street_retrun_reject") {
+
+          if (item.identity_key === "streetAuditStatus") {
             obj.rejectDescId = item.id;
           }
         });

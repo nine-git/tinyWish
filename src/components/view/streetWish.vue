@@ -61,6 +61,7 @@
         <van-field label="心愿描述：" readonly type="text" v-model="formData.pepole.wishDesc" />
         <van-field label="家庭住址：" readonly type="text" v-model="formData.pepole.familyAddr" />
         <van-field label="家庭情况：" readonly type="text" v-model="formData.pepole.familyDesc" />
+
         <van-field
           v-if="formData.audit.statusStreet==='已退回'"
           label="退回原因："
@@ -134,10 +135,11 @@ export default {
       //请求所需要的字段
       let obj = {};
       this.formNameData.forEach((item) => {
-        if (item.identity_key === "streetauditDateTime") {
+
+        if (item.identity_key === "streetAuditDateTime") {
           obj.timeFileId = item.id;
         }
-        if (item.identity_key === "streetauditStatus") {
+        if (item.identity_key === "streetAuditStatus") {
           obj.auditStatusId = item.id;
           item.options.forEach((item) => {
             if (item.value === "已通过") {
@@ -198,7 +200,8 @@ export default {
         this.formSumData = res.data;
         if (res.status === 200) {
           this.formNameData.forEach((item) => {
-            if (item.identity_key === "streetauditStatus") {
+
+            if (item.identity_key === "streetAuditStatus") {
               this.formData.audit.idStreet = item.id;
               item.options.forEach((item) => {
                 if (item.value === "已通过") {
@@ -237,10 +240,11 @@ export default {
       if (this.myTextArea) {
         //  有退回原因
         this.formNameData.forEach((item) => {
-          if (item.identity_key === "streetauditDateTime") {
+
+          if (item.identity_key === "streetAuditDateTime") {
             obj.timeFileId = item.id;
           }
-          if (item.identity_key === "streetauditStatus") {
+          if (item.identity_key === "streetAuditStatus") {
             obj.auditStatusId = item.id;
             item.options.forEach((item) => {
               if (item.value === "已退回") {
@@ -248,7 +252,8 @@ export default {
               }
             });
           }
-          if (item.identity_key === "street_retrun_reject") {
+
+          if (item.identity_key === "streetAuditStatus") {
             obj.rejectDescId = item.id;
           }
         });
@@ -297,7 +302,8 @@ export default {
           this.formSumData = res.data;
           if (res.status === 200) {
             this.formNameData.forEach((item) => {
-              if (item.identity_key === "streetauditStatus") {
+
+              if (item.identity_key === "streetAuditStatus") {
                 this.formData.audit.idStreet = item.id;
                 item.options.forEach((item) => {
                   if (item.value === "已退回") {
@@ -378,15 +384,16 @@ export default {
           objData.audit.id = "";
         }
         //  对象的街道办状态和option_id
-        if (item.mapped_values.streetauditStatus) {
+
+        if (item.mapped_values.streetAuditStatus) {
           objData.audit.statusStreet =
-            item.mapped_values.streetauditStatus.value[0].value;
+            item.mapped_values.streetAuditStatus.value[0].value;
           objData.audit.option_idStreet =
-            item.mapped_values.streetauditStatus.value[0].id;
+            item.mapped_values.streetAuditStatus.value[0].id;
         } else {
           objData.audit.statusStreet = "待审核";
           this.formNameData.forEach((item) => {
-            if (item.identity_key === "streetauditStatus") {
+            if (item.identity_key === "streetAuditStatus") {
               item.options.forEach((item) => {
                 if (item.value === "待审核") {
                   objData.audit.option_idStreet = item.id;
@@ -406,6 +413,7 @@ export default {
         if (item.mapped_values.street_retrun_reject) {
           objData.pepole.rejectDesc =
             item.mapped_values.street_retrun_reject.value[0];
+
         }
         for (let y = 0; y < item.entries.length; y++) {
           //  对象的图片路径

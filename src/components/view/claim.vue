@@ -57,6 +57,7 @@
         <van-field label="发起人：" readonly type="text" v-model="fromData.name" />
         <van-field label="所属社区：" readonly type="text" v-model="fromData.community" />
         <van-field label="家庭情况：" readonly type="text" v-model="fromData.familyDesc" />
+
         <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishDesc" />
 
         <div v-if="!fromData.claimer">

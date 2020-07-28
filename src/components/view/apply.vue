@@ -91,7 +91,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claim_time'">
+              <p v-else-if="item.identity_key ==='claimTime'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -107,7 +107,7 @@
         <div v-else>
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
           <van-field label="认领人电话：" readonly type="text" v-model="fromData.claim_phone" />
-          <van-field label="认领时间：" readonly type="text" v-model="fromData.claim_time" />
+          <van-field label="认领时间：" readonly type="text" v-model="fromData.claimTime" />
 
           <!-- 交接模块 -->
           <div v-if="!fromData.connect_img">
@@ -160,7 +160,7 @@ export default {
         "claimer",
         "claim_state",
         "claim_phone",
-        "claim_time",
+        "claimTime",
         "connect_img",
         "connect_describe",
         "connect_time",
@@ -292,7 +292,7 @@ export default {
           supplies_name: el.mapped_values.supplies_name.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
           claim_phone: el.mapped_values.claim_phone.exported_value[0],
-          claim_time: el.mapped_values.claim_time.exported_value[0],
+          claimTime: el.mapped_values.claimTime.exported_value[0],
           connect_img: el.mapped_values.connect_img.exported_value[0].slice(
             el.mapped_values.connect_img.exported_value[0].indexOf("（") + 1,
             el.mapped_values.connect_img.exported_value[0].indexOf("）")
@@ -310,7 +310,7 @@ export default {
           supplies_name: el.mapped_values.supplies_name.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
           claim_phone: el.mapped_values.claim_phone.exported_value[0],
-          claim_time: el.mapped_values.claim_time.exported_value[0],
+          claimTime: el.mapped_values.claimTime.exported_value[0],
         };
         return;
       }

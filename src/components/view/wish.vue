@@ -61,6 +61,7 @@
         <van-field label="心愿描述：" readonly type="text" v-model="formData.pepole.wishDesc" />
         <van-field label="家庭住址：" readonly type="text" v-model="formData.pepole.familyAddr" />
         <van-field label="家庭情况：" readonly type="text" v-model="formData.pepole.familyDesc" />
+
         <van-field
           v-if="formData.audit.status==='已退回'"
           label="退回原因："
@@ -142,7 +143,8 @@ export default {
             }
           });
         }
-        if (item.identity_key === "streetauditStatus") {
+
+        if (item.identity_key === "streetAuditStatus") {
           obj.handStatusId = item.id;
           item.options.forEach((item) => {
             if (item.value === "待审核") {
@@ -379,6 +381,7 @@ export default {
         objData.pepole.community = item.mapped_values.community.value[0].value;
         objData.pepole.familyAddr = item.mapped_values.familyAddr.value[0];
         objData.pepole.familyDesc = item.mapped_values.familyDesc.value[0];
+
         objData.pepole.tel = item.mapped_values.tel.value[0];
         objData.pepole.idCard = item.mapped_values.idCard.value[0];
         if (item.mapped_values.rejectDesc) {
