@@ -180,20 +180,22 @@
                 })
               }
             })
-            this.$toast("已通过");
-            this.$router.go(0);
             let headers = {
               "content-type": "application/json",
             };
             let pushData={
-              "openids":"oQU491lD3XFpBjLD94ihZ92SmPUI",
+              "openids":res.data.user.openid,
               "news_entity":
                 {
                   "title":"微心愿",
-                  "description":"您的心愿已经通过啦",
+                  "description":"您的心愿社区通过啦！",
                   "picurl":"http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
                 }
             }
+            api.postPushWeChat(pushData, headers).then(res=>{
+              this.$toast("已通过");
+              this.$router.go(0);
+            })
           } else {
             this.$toast("通过失败 >_<");
           }
@@ -275,8 +277,22 @@
                   })
                 }
               })
-              this.$toast("退回");
-              this.$router.go(0);
+              let headers = {
+                "content-type": "application/json",
+              };
+              let pushData={
+                "openids":res.data.user.openid,
+                "news_entity":
+                  {
+                    "title":"微心愿",
+                    "description":"不好意思，您的心愿不满足审核条件！",
+                    "picurl":"http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+                  }
+              }
+              api.postPushWeChat(pushData, headers).then(res=>{
+                this.$toast("已退回");
+                this.$router.go(0);
+              })
             } else {
               this.$toast("退回失败 >_<");
             }
@@ -298,6 +314,7 @@
       })
       //  获取心愿审核的数据
       api.getFormsResponsesAPI('328').then((res) => {
+        console.log(res)
         this.formSumData=res.data
         res.data.forEach((item)=> {
           let objData = {
