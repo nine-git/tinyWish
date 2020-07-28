@@ -169,9 +169,10 @@ export default {
     api.getFormsResponsesAPI(328).then((res) => {
       res = res.data;
       res.forEach((element) => {
-        if (element.mapped_values.auditStatus) {
+        if (element.mapped_values.streetAuditStatus) {
           if (
-            element.mapped_values.auditStatus.exported_value[0] === "已通过" &&
+            element.mapped_values.streetAuditStatus.exported_value[0] ===
+              "已通过" &&
             element.mapped_values.claimStatus.exported_value[0] === "已认领"
           ) {
             element.img = element.mapped_values.wishPhoto.exported_value[0].slice(
@@ -183,7 +184,8 @@ export default {
             this.claimedList.push(element);
           }
           if (
-            element.mapped_values.auditStatus.exported_value[0] === "已通过" &&
+            element.mapped_values.streetAuditStatus.exported_value[0] ===
+              "已通过" &&
             element.mapped_values.claimStatus.exported_value[0] === "已完成"
           ) {
             element.img = element.mapped_values.wishPhoto.exported_value[0].slice(
@@ -195,7 +197,8 @@ export default {
             this.finishList.push(element);
           }
           if (
-            element.mapped_values.auditStatus.exported_value[0] === "已通过" &&
+            element.mapped_values.streetAuditStatus.exported_value[0] ===
+              "已通过" &&
             element.mapped_values.claimStatus.exported_value[0] === "待认领"
           ) {
             element.img = element.mapped_values.wishPhoto.exported_value[0].slice(
