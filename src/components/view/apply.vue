@@ -189,12 +189,12 @@ export default {
               "已通过" &&
             element.mapped_values.claim_state.exported_value[0] === "未被认领"
           ) {
-            element.img = element.mapped_values.supplies_img.exported_value[0].slice(
-              element.mapped_values.supplies_img.exported_value[0].indexOf(
-                "（"
-              ) + 1,
-              element.mapped_values.supplies_img.exported_value[0].indexOf("）")
-            );
+            element.entries.forEach((el) => {
+              if (el.attachment) {
+                let str = el.attachment.download_url;
+                element.img = str.slice(0, str.indexOf("?"));
+              }
+            });
             element.time = element.created_at.slice(0, 10);
             this.claimList.push(element);
           }
@@ -203,12 +203,12 @@ export default {
               "已通过" &&
             element.mapped_values.claim_state.exported_value[0] === "已认领"
           ) {
-            element.img = element.mapped_values.supplies_img.exported_value[0].slice(
-              element.mapped_values.supplies_img.exported_value[0].indexOf(
-                "（"
-              ) + 1,
-              element.mapped_values.supplies_img.exported_value[0].indexOf("）")
-            );
+            element.entries.forEach((el) => {
+              if (el.attachment) {
+                let str = el.attachment.download_url;
+                element.img = str.slice(0, str.indexOf("?"));
+              }
+            });
             element.time = element.created_at.slice(0, 10);
             this.claimedList.push(element);
           }
@@ -217,12 +217,12 @@ export default {
               "已通过" &&
             element.mapped_values.claim_state.exported_value[0] === "已完成"
           ) {
-            element.img = element.mapped_values.supplies_img.exported_value[0].slice(
-              element.mapped_values.supplies_img.exported_value[0].indexOf(
-                "（"
-              ) + 1,
-              element.mapped_values.supplies_img.exported_value[0].indexOf("）")
-            );
+            element.entries.forEach((el) => {
+              if (el.attachment) {
+                let str = el.attachment.download_url;
+                element.img = str.slice(0, str.indexOf("?"));
+              }
+            });
             element.time = element.created_at.slice(0, 10);
             this.finishList.push(element);
           }
@@ -231,12 +231,12 @@ export default {
               "已通过" &&
             element.mapped_values.claim_state.exported_value[0] === "已失效"
           ) {
-            element.img = element.mapped_values.supplies_img.exported_value[0].slice(
-              element.mapped_values.supplies_img.exported_value[0].indexOf(
-                "（"
-              ) + 1,
-              element.mapped_values.supplies_img.exported_value[0].indexOf("）")
-            );
+            element.entries.forEach((el) => {
+              if (el.attachment) {
+                let str = el.attachment.download_url;
+                element.img = str.slice(0, str.indexOf("?"));
+              }
+            });
             element.time = element.created_at.slice(0, 10);
             this.loseList.push(element);
           }
