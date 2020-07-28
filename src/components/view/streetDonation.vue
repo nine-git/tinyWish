@@ -191,6 +191,7 @@ export default {
           item.mapped_values.supplies_name.value[0];
         objData.pepole.supplies_time =
           item.mapped_values.supplies_time.value[0];
+
         if (item.mapped_values.streetAuditStatus) {
           objData.pepole.retrunReject =
             item.mapped_values.streetAuditStatus.value[0];
@@ -357,6 +358,7 @@ export default {
               }
             });
           }
+
           if (item.identity_key === "streetAuditStatus") {
             obj.rejectDescId = item.id;
           }

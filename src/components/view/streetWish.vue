@@ -60,7 +60,8 @@
         <van-field label="所属社区：" readonly type="text" v-model="formData.pepole.community" />
         <van-field label="心愿描述：" readonly type="text" v-model="formData.pepole.wishDesc" />
         <van-field label="家庭住址：" readonly type="text" v-model="formData.pepole.familyAddr" />
-        <van-field label="家庭情况：" readonly type="text" v-model="formData.pepole.familydDesc" />
+        <van-field label="家庭情况：" readonly type="text" v-model="formData.pepole.familyDesc" />
+
         <van-field
           v-if="formData.audit.statusStreet==='已退回'"
           label="退回原因："
@@ -134,6 +135,7 @@ export default {
       //请求所需要的字段
       let obj = {};
       this.formNameData.forEach((item) => {
+
         if (item.identity_key === "streetAuditDateTime") {
           obj.timeFileId = item.id;
         }
@@ -198,6 +200,7 @@ export default {
         this.formSumData = res.data;
         if (res.status === 200) {
           this.formNameData.forEach((item) => {
+
             if (item.identity_key === "streetAuditStatus") {
               this.formData.audit.idStreet = item.id;
               item.options.forEach((item) => {
@@ -237,6 +240,7 @@ export default {
       if (this.myTextArea) {
         //  有退回原因
         this.formNameData.forEach((item) => {
+
           if (item.identity_key === "streetAuditDateTime") {
             obj.timeFileId = item.id;
           }
@@ -248,6 +252,7 @@ export default {
               }
             });
           }
+
           if (item.identity_key === "streetAuditStatus") {
             obj.rejectDescId = item.id;
           }
@@ -297,6 +302,7 @@ export default {
           this.formSumData = res.data;
           if (res.status === 200) {
             this.formNameData.forEach((item) => {
+
               if (item.identity_key === "streetAuditStatus") {
                 this.formData.audit.idStreet = item.id;
                 item.options.forEach((item) => {
@@ -378,6 +384,7 @@ export default {
           objData.audit.id = "";
         }
         //  对象的街道办状态和option_id
+
         if (item.mapped_values.streetAuditStatus) {
           objData.audit.statusStreet =
             item.mapped_values.streetAuditStatus.value[0].value;
@@ -400,12 +407,13 @@ export default {
         objData.pepole.wishDesc = item.mapped_values.wishDesc.value[0];
         objData.pepole.community = item.mapped_values.community.value[0].value;
         objData.pepole.familyAddr = item.mapped_values.familyAddr.value[0];
-        objData.pepole.familydDesc = item.mapped_values.familydDesc.value[0];
+        objData.pepole.familyDesc = item.mapped_values.familyDesc.value[0];
         objData.pepole.tel = item.mapped_values.tel.value[0];
         objData.pepole.idCard = item.mapped_values.idCard.value[0];
-        if (item.mapped_values.streetAuditStatus) {
+        if (item.mapped_values.street_retrun_reject) {
           objData.pepole.rejectDesc =
-            item.mapped_values.streetAuditStatus.value[0];
+            item.mapped_values.street_retrun_reject.value[0];
+
         }
         for (let y = 0; y < item.entries.length; y++) {
           //  对象的图片路径

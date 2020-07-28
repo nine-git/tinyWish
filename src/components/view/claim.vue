@@ -56,7 +56,8 @@
         <img :src="fromData.img" alt class="popup_img" />
         <van-field label="发起人：" readonly type="text" v-model="fromData.name" />
         <van-field label="所属社区：" readonly type="text" v-model="fromData.community" />
-        <van-field label="家庭情况：" readonly type="text" v-model="fromData.familydDesc" />
+        <van-field label="家庭情况：" readonly type="text" v-model="fromData.familyDesc" />
+
         <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishDesc" />
 
         <div v-if="!fromData.claimer">
@@ -251,7 +252,7 @@ export default {
         img: el.img,
         name: el.mapped_values.name.exported_value[0],
         community: el.mapped_values.community.exported_value[0],
-        familydDesc: el.mapped_values.familydDesc.exported_value[0],
+        familyDesc: el.mapped_values.familyDesc.exported_value[0],
         wishDesc: el.mapped_values.wishDesc.exported_value[0],
       };
       if (el.mapped_values.claimer) {
@@ -259,7 +260,7 @@ export default {
           img: el.img,
           name: el.mapped_values.name.exported_value[0],
           community: el.mapped_values.community.exported_value[0],
-          familydDesc: el.mapped_values.familydDesc.exported_value[0],
+          familyDesc: el.mapped_values.familyDesc.exported_value[0],
           wishDesc: el.mapped_values.wishDesc.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
@@ -271,7 +272,7 @@ export default {
           img: el.img,
           name: el.mapped_values.name.exported_value[0],
           community: el.mapped_values.community.exported_value[0],
-          familydDesc: el.mapped_values.familydDesc.exported_value[0],
+          familyDesc: el.mapped_values.familyDesc.exported_value[0],
           wishDesc: el.mapped_values.wishDesc.exported_value[0],
           claimer: el.mapped_values.claimer.exported_value[0],
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
