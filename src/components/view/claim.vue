@@ -101,7 +101,7 @@
             <div :key="item.identity_key" v-for="item in tableData">
               <div v-if="item.identity_key ==='finishPhoto'">
                 <p class="finishPhoto">上传交接图片：</p>
-                <van-uploader :after-read="afterRead" />
+                <van-uploader v-model="uploader" :after-read="afterRead" />
               </div>
               <p v-if="item.identity_key ==='finishDesc'">
                 <van-field
@@ -143,6 +143,7 @@ export default {
       show: false,
       fromData: "",
       fields: "",
+      uploader: [],
       orderFieldList: [
         "claimer",
         "claimPhone",
