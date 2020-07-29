@@ -159,6 +159,7 @@ export default {
       uptoken: "",
       value_id: "",
       active: 0,
+      finishPhoto: "",
     };
   },
   components: {
@@ -274,6 +275,12 @@ export default {
         };
       }
       if (el.mapped_values.finishPhoto) {
+        el.entries.forEach((el) => {
+          if (el.field_id == 9189) {
+            let str = el.attachment.download_url;
+            this.finishPhoto = str.slice(0, str.indexOf("?"));
+          }
+        });
         this.fromData = {
           img: el.img,
           name: el.mapped_values.name.exported_value[0],
@@ -283,12 +290,9 @@ export default {
           claimer: el.mapped_values.claimer.exported_value[0],
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
           claimCompany: el.mapped_values.claimCompany.exported_value[0],
-          finishPhoto: el.mapped_values.finishPhoto.exported_value[0].slice(
-            el.mapped_values.finishPhoto.exported_value[0].indexOf("（") + 1,
-            el.mapped_values.finishPhoto.exported_value[0].indexOf("）")
-          ),
           finishDesc: el.mapped_values.finishDesc.exported_value[0],
           finishDateTime: el.mapped_values.finishDateTime.exported_value[0],
+          finishPhoto: this.finishPhoto,
         };
       }
     },
