@@ -330,8 +330,22 @@ export default {
       );
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
-          this.$toast("认领成功 ✨");
-          this.$router.go(0);
+          let headers = {
+            "content-type": "application/json",
+          };
+          let pushData = {
+            openids: res.data.user.openid,
+            news_entity: {
+              title: "微心愿",
+              description: "你的心愿已实现",
+              picurl: "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
+              url: "http://47.92.163.233:9090/tiny_wish/claim",
+            },
+          };
+          api.postPushWeChat(pushData, headers).then((res) => {
+            this.$toast("认领成功 ✨");
+            this.$router.go(0);
+          });
         } else {
           this.$toast("认领失败 >_<");
         }
