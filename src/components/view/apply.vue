@@ -5,15 +5,18 @@
       <van-tabs v-model="active">
         <van-tab title="未被认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
-            <img :src="item.img" alt class="main_img" />
-            <p v-if="item.mapped_values.name">
-              {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
-              <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
-            </p>
-            <p v-if="item.time">{{item.time}}</p>
-            <button class="mian_button button">
-              <span class="claiming">待认领</span>
-            </button>
+            <template v-if="Number(item.number)">
+              <img :src="item.img" alt class="main_img" />
+              <p v-if="item.mapped_values.name">
+                {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
+                <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
+              </p>
+              <p>数量:{{item.number}}</p>
+              <p v-if="item.time">{{item.time}}</p>
+              <button class="mian_button button">
+                <span class="claiming">待认领</span>
+              </button>
+            </template>
           </div>
         </van-tab>
         <van-tab title="已认领">
@@ -91,7 +94,7 @@
                   v-model="item.value"
                 />
               </p>
-              <p v-else-if="item.identity_key ==='claim_time'">
+              <p v-else-if="item.identity_key ==='supplies_number'">
                 <van-field
                   :label="item.title +'：'"
                   placeholder="请输入"
@@ -164,11 +167,13 @@ export default {
         "connect_img",
         "connect_describe",
         "connect_time",
+        "supplies_number",
       ],
       tableData: [],
       date: "",
       dataID: "",
       option_id: "",
+      supplies_number_id:"",
       uptoken: "",
       value_id: "",
       active: "0",
@@ -196,6 +201,9 @@ export default {
                 element.img = str.slice(0, str.indexOf("?"));
               }
             });
+            element.number =
+              element.mapped_values.supplies_number &&
+              element.mapped_values.supplies_number.exported_value[0];
             element.time = element.created_at.slice(0, 10);
             this.claimList.push(element);
           }
@@ -279,6 +287,8 @@ export default {
       el.entries.forEach((element) => {
         if (element.field_id === 9262) {
           this.option_id = element.id;
+        }else if(element.field_id === 9326){
+          this.supplies_number_id = element.id;
         }
       });
       this.show = true;
@@ -289,6 +299,7 @@ export default {
         name: el.mapped_values.name.exported_value[0],
         phone: el.mapped_values.phone.exported_value[0],
         supplies_name: el.mapped_values.supplies_name.exported_value[0],
+        supplies_number: el.mapped_values.supplies_number.exported_value[0],
       };
       if (el.mapped_values.claimer) {
         this.fromData = {
@@ -329,13 +340,22 @@ export default {
       // console.log(data);
       // 获取时间
       this.date = unit.formatDateTime();
+      let supplies_number_obj;
+      let supplies_number = Number(this.fromData.supplies_number);
       let payload = {
         response: { entries_attributes: [] },
       };
       data.forEach((element) => {
         if (element.value !== "") {
+          // 物资数量
+          if (element.identity_key === "supplies_number") {
+            supplies_number_obj = element;
+          }
           // 修改认领状态
-          if (element.field_id !== 9262) {
+          if (
+            element.field_id !== 9262 &&
+            element.identity_key !== "supplies_number"
+          ) {
             payload.response.entries_attributes.push({
               field_id: element.field_id,
               value: element.value,
@@ -343,6 +363,15 @@ export default {
           }
         }
       });
+      // 物资数量
+      if (supplies_number_obj.value > supplies_number) {
+        this.$toast("物资数量不能大于总数量 >_<");
+        return;
+      }
+      if (supplies_number_obj.value <= 0 || !supplies_number_obj.value) {
+        this.$toast("物资数量不能小于等于零 >_<");
+        return;
+      }
       // 自动填值
       payload.response.entries_attributes.push(
         {
@@ -353,6 +382,10 @@ export default {
         {
           field_id: 9265,
           value: this.date,
+        },
+        {
+          id: this.supplies_number_id,
+          value: supplies_number - supplies_number_obj.value,
         }
       );
       api.putFormsAmendAPI(this.fromId, this.dataID, payload).then((res) => {
