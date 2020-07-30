@@ -140,7 +140,7 @@ export default {
       claimedList: [],
       finishList: [],
       claimList: [],
-      itemImg: '',
+      itemImg: "",
       show: false,
       fromData: "",
       fields: "",
@@ -159,7 +159,6 @@ export default {
       dataID: "",
       option_id: "",
       uptoken: "",
-      value_id: "",
       active: 0,
       finishPhoto: "",
     };
@@ -219,7 +218,7 @@ export default {
       });
     });
     api.getFormsAPI(328).then((res) => {
-      this.itemImg = unit.getImgUrl(res.data.description)
+      this.itemImg = unit.getImgUrl(res.data.description);
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
     });
@@ -242,8 +241,22 @@ export default {
 
         api.postQiNiuApi(data, headers).then((res) => {
           if (res.status === 200) {
-            this.$toast("上传成功 ✨");
-            this.value_id = res.data.id;
+            let payload = {
+              response: { entries_attributes: [] },
+            };
+            payload.response.entries_attributes.push({
+              field_id: 9189,
+              value: "附件",
+              value_id: res.data.id
+            });
+            // 发请求上传图片
+            api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+              if (res.status === 200) {
+                this.$toast("上传成功 ✨");
+              } else {
+                this.$toast("上传失败 >_<");
+              }
+            });
           } else {
             this.$toast("网络波动，请再试一次");
           }
@@ -376,11 +389,6 @@ export default {
           id: this.option_id,
           field_id: 9190,
           option_id: 7362,
-        },
-        {
-          field_id: 9189,
-          value: "附件",
-          value_id: this.value_id,
         }
       );
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
