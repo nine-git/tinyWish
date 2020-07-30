@@ -6,7 +6,7 @@
         <van-tab title="待审核">
           <div v-for="(item) in auditFormData" class="wishContainer" @click="showPopup(item)">
             <div class="wishImg">
-              <img :src="item.img_url" alt />
+              <img :src="imgItem" alt />
             </div>
             <div class="wishContent">
               <P>{{item.pepole.name}}的心愿：{{item.pepole.wishDesc}}</P>
@@ -18,7 +18,7 @@
         <van-tab title="已通过">
           <div v-for="(item) in passFormData" class="wishContainer" @click="showPopup(item)">
             <div class="wishImg">
-              <img :src="item.img_url" alt />
+              <img :src="imgItem" alt />
             </div>
             <div class="wishContent">
               <P>{{item.pepole.name}}的心愿：{{item.pepole.wishDesc}}</P>
@@ -30,7 +30,7 @@
         <van-tab title="已退回">
           <div v-for="(item) in unpassFormData" class="wishContainer" @click="showPopup(item)">
             <div class="wishImg">
-              <img :src="item.img_url" alt />
+              <img :src="imgItem" alt />
             </div>
             <div class="wishContent">
               <P>{{item.pepole.name}}的心愿：{{item.pepole.wishDesc}}</P>
@@ -114,6 +114,7 @@ export default {
       show: false, //弹出框展示
       formId: "328", //表单号
       formSumData: [], //所有的数据
+      imgItem: '', // 心愿图片
       formData: {
         audit: { id: "", status: "", option_id: "" },
         pepole: { name: "", field_id: "" },
@@ -346,6 +347,7 @@ export default {
   beforeCreate() {
     //获取心愿表单数据
     api.getFormsAPI("328").then((res) => {
+      this.imgItem = unit.getImgUrl(res.data.description);
       this.formNameData = res.data.fields;
     });
     //  获取心愿审核的数据
