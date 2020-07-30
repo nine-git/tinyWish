@@ -241,7 +241,6 @@ export default {
 
         api.postQiNiuApi(data, headers).then((res) => {
           if (res.status === 200) {
-            this.$toast("上传成功 ✨");
             let payload = {
               response: { entries_attributes: [] },
             };

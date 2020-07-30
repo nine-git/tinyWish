@@ -114,7 +114,7 @@
             <div :key="item.identity_key" v-for="item in tableData">
               <div v-if="item.identity_key ==='connect_img'">
                 <p class="finishPhoto">上传交接图片：</p>
-                <van-uploader :after-read="afterRead" />
+                <van-uploader v-model="uploader" :after-read="afterRead" />
               </div>
               <p v-if="item.identity_key ==='connect_describe'">
                 <van-field
@@ -156,6 +156,7 @@ export default {
       fromData: "",
       fromId: 334,
       fields: "",
+      uploader: [],
       orderFieldList: [
         "claimer",
         "claim_state",
@@ -170,7 +171,6 @@ export default {
       dataID: "",
       option_id: "",
       uptoken: "",
-      value_id: "",
       active: "0",
       connect_img: "",
     };
@@ -267,8 +267,22 @@ export default {
 
         api.postQiNiuApi(data, headers).then((res) => {
           if (res.status === 200) {
-            this.$toast("上传成功 ✨");
-            this.value_id = res.data.id;
+            let payload = {
+              response: { entries_attributes: [] },
+            };
+            payload.response.entries_attributes.push({
+              field_id: 9267,
+              value: "附件",
+              value_id: res.data.id,
+            });
+            // 发请求上传图片
+            api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+              if (res.status === 200) {
+                this.$toast("上传成功 ✨");
+              } else {
+                this.$toast("上传失败 >_<");
+              }
+            });
           } else {
             this.$toast("网络波动，请再试一次");
           }
@@ -391,12 +405,6 @@ export default {
           id: this.option_id,
           field_id: 9262,
           option_id: 7395,
-        },
-        // 附件
-        {
-          field_id: 9267,
-          value: "附件",
-          value_id: this.value_id,
         }
       );
       api.putFormsAmendAPI(this.fromId, this.dataID, payload).then((res) => {
