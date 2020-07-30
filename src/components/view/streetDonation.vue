@@ -146,23 +146,6 @@ export default {
         objData.creatTime = unit.dateFormat("YYYY-mm-dd", item.created_at);
         //  对象的id
         objData.id = item.id;
-        //  对象的社区状态和option_id
-        if (item.mapped_values.review_state) {
-          objData.audit.status = item.mapped_values.review_state.value[0].value;
-          objData.audit.option_id = item.mapped_values.review_state.value[0].id;
-        } else {
-          objData.audit.status = "待审核";
-          this.formNameData.forEach((item) => {
-            if (item.identity_key === '"review_state"') {
-              item.options.forEach((item) => {
-                if (item.value === "待审核") {
-                  objData.audit.option_id = item.id;
-                }
-              });
-            }
-          });
-          objData.audit.id = "";
-        }
         //  对象的捐赠状态和option_id
         if (item.mapped_values.review_street_state) {
           objData.audit.statusStreet =
@@ -216,19 +199,13 @@ export default {
           objData.img_url = this.defaultwishphoto;
         }
         if (
-          objData.audit.statusStreet === "待审核" &&
-          objData.audit.status === "已通过"
-        ) {
+          objData.audit.statusStreet === "待审核") {
           this.auditFormData.push(objData);
         } else if (
-          objData.audit.statusStreet === "已通过" &&
-          objData.audit.status === "已通过"
-        ) {
+          objData.audit.statusStreet === "已通过") {
           this.passFormData.push(objData);
         } else if (
-          objData.audit.statusStreet === "已退回" &&
-          objData.audit.status === "已通过"
-        ) {
+          objData.audit.statusStreet === "已退回") {
           this.unpassFormData.push(objData);
         }
       });
