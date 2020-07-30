@@ -36,6 +36,19 @@ export default [
     component: () =>
       import(/* webpackChunkName:'wish' */ "@/components/view/streetWish")
   },
+  // 登录
+  {
+    path: "/tiny_wish/code",
+    name: "code",
+    component: () =>
+      import(/* webpackChunkName:'code' */ "@/components/admin/code")
+  },
+  {
+    path: "/tiny_wish/login",
+    name: "login",
+    component: () =>
+      import(/* webpackChunkName:'login' */ "@/components/admin/login")
+  },
   {
     path: "/tiny_wish/streetDonation",
     name: "streetDonation",

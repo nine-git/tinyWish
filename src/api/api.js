@@ -28,7 +28,12 @@ export default {
     return http.get("/magnate/oauth", "");
   },
   // 微信通知消息
-  postPushWeChat(data, headers){
-    return http.post("/api/v4/pushes/wechat", data, headers)
+  postPushWeChat(data, headers) {
+    return http.post("/api/v4/pushes/wechat", data, headers);
+  },
+  // 登录oauth
+
+  getUserAPI(token) {
+    return http.get(`/v1/user?access_token=` + token);
   }
 };
