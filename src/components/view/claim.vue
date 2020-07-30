@@ -5,7 +5,7 @@
       <van-tabs v-model="active">
         <van-tab title="待认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
-            <img :src="item.img" alt class="main_img" />
+            <img :src="itemImg" alt class="main_img" />
             <p v-if="item.mapped_values.name">
               {{item.mapped_values.name.exported_value[0]}}的心愿：
               <span>{{item.mapped_values.wishDesc.exported_value[0]}}</span>
@@ -18,7 +18,7 @@
         </van-tab>
         <van-tab title="已认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimedList">
-            <img :src="item.img" alt class="main_img" />
+            <img :src="itemImg" alt class="main_img" />
             <p v-if="item.mapped_values.name">
               {{item.mapped_values.name.exported_value[0]}}的心愿：
               <span>{{item.mapped_values.wishDesc.exported_value[0]}}</span>
@@ -31,7 +31,7 @@
         </van-tab>
         <van-tab title="已完成">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in finishList">
-            <img :src="item.img" alt class="main_img" />
+            <img :src="itemImg" alt class="main_img" />
             <p v-if="item.mapped_values.name">
               {{item.mapped_values.name.exported_value[0]}}的心愿：
               <span>{{item.mapped_values.wishDesc.exported_value[0]}}</span>
@@ -140,6 +140,7 @@ export default {
       claimedList: [],
       finishList: [],
       claimList: [],
+      itemImg: '',
       show: false,
       fromData: "",
       fields: "",
@@ -218,6 +219,7 @@ export default {
       });
     });
     api.getFormsAPI(328).then((res) => {
+      this.itemImg = unit.getImgUrl(res.data.description)
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
     });

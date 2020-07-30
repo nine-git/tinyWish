@@ -83,5 +83,9 @@ export default {
       };
     };
     return fmt;
+  },
+  // 解析图片地址
+  getImgUrl(str){
+    return str.match(/(http?.+)\?/)[1]
   }
 }
