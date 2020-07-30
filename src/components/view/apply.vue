@@ -172,6 +172,7 @@ export default {
       uptoken: "",
       value_id: "",
       active: "0",
+      connect_img: "",
     };
   },
   components: {
@@ -301,6 +302,12 @@ export default {
           claim_time: el.mapped_values.claim_time.exported_value[0],
         };
         if (el.mapped_values.connect_time) {
+          el.entries.forEach((el) => {
+            if (el.field_id == 9267) {
+              let str = el.attachment.download_url;
+              this.connect_img = str.slice(0, str.indexOf("?"));
+            }
+          });
           this.fromData = {
             img: el.img,
             company: el.mapped_values.company.exported_value[0],
@@ -310,10 +317,7 @@ export default {
             claimer: el.mapped_values.claimer.exported_value[0],
             claim_phone: el.mapped_values.claim_phone.exported_value[0],
             claim_time: el.mapped_values.claim_time.exported_value[0],
-            connect_img: el.mapped_values.connect_img.exported_value[0].slice(
-              el.mapped_values.connect_img.exported_value[0].indexOf("（") + 1,
-              el.mapped_values.connect_img.exported_value[0].indexOf("）")
-            ),
+            connect_img: this.connect_img,
             connect_describe:
               el.mapped_values.connect_describe.exported_value[0],
             connect_time: el.mapped_values.connect_time.exported_value[0],
@@ -347,7 +351,7 @@ export default {
           option_id: 7384,
         },
         {
-          field_id: 9269,
+          field_id: 9265,
           value: this.date,
         }
       );
