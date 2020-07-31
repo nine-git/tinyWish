@@ -124,8 +124,7 @@ export default {
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
       //默认图片路径
-      defaultwishphoto:
-        "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596",
+      defaultwishphoto: "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
     };
   },
   mounted() {

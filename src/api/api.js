@@ -35,5 +35,9 @@ export default {
 
   getUserAPI(token) {
     return http.get(`/v1/user?access_token=` + token);
+  },
+//  获取街道办的管理人员
+  getStreetAdmin(){
+    return http.get(`/magnate/admin/tags/41/taggables.json`)
   }
 };
