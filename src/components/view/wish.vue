@@ -120,7 +120,10 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
-      myCommunity:localStorage.getItem('user_tags').split(",")||''
+      myCommunity:localStorage.getItem('user_tags').split(",")||'',
+      headers : {
+        "content-type": "application/json",
+      }
      };
   },
   methods: {
@@ -194,8 +197,11 @@ export default {
       api.putFormsAmendAPI(this.formId, this.formData.id, str).then((res) => {
         this.show = false;
         this.formSumData = res.data;
+        let pushData = unit.createdWeixin(res.data.user.openid,"微心愿",
+          "您的心愿社区通过啦！",
+          "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR")
         if (res.status === 200) {
-          //社区通过审核给街道办提醒
+
           this.formNameData.forEach((item) => {
             if (item.identity_key === "auditStatus") {
               this.formData.audit.id = item.id;
@@ -207,21 +213,26 @@ export default {
               });
             }
           });
-          let headers = {
-            "content-type": "application/json",
-          };
-          let pushData = {
-            openids: res.data.user.openid,
-            news_entity: {
-              title: "微心愿",
-              description: "您的心愿社区通过啦！",
-              picurl: "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
-            },
-          };
-          api.postPushWeChat(pushData, headers).then((res) => {
-            this.$toast("已通过");
-            this.$router.go(0);
-          });
+          api.postPushWeChat(pushData, this.headers)
+            .then(res=>{
+              //社区通过审核给街道办提醒
+              api.getStreetAdmin().then(res => {
+                if (res.status===200){
+                  let streetOpenId=res.data.map(item=>item.openid)
+                  streetOpenId.forEach(item=>{
+                    let pushStreetData=unit.createdWeixin(item,"微心愿",
+                      "有新的心愿社区通过了，您可以在街道办审核啦！",
+                      "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
+                      "http://47.92.163.233:9090/tiny_wish/streetWish"
+                    )
+                    api.postPushWeChat(pushStreetData, this.headers).then(res=>{
+                      this.$toast("已通过");
+                      this.$router.go(0);
+                    })
+                  })
+                }
+              })
+            });
         } else {
           this.$toast("通过失败 >_<");
         }
@@ -305,18 +316,10 @@ export default {
                 });
               }
             });
-            let headers = {
-              "content-type": "application/json",
-            };
-            let pushData = {
-              openids: res.data.user.openid,
-              news_entity: {
-                title: "微心愿",
-                description: "不好意思，您的心愿不满足审核条件！",
-                picurl: "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
-              },
-            };
-            api.postPushWeChat(pushData, headers).then((res) => {
+            let pushData = unit.createdWeixin(res.data.user.openid,'微心愿',
+              "不好意思，您的心愿不满足审核条件！",
+              "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR")
+            api.postPushWeChat(pushData, this.headers).then((res) => {
               this.$toast("已退回");
               this.$router.go(0);
             });

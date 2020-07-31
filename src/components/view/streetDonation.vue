@@ -123,8 +123,6 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
-      //默认图片路径
-      defaultwishphoto: "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
     };
   },
   mounted() {
