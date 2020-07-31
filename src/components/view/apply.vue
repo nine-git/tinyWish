@@ -5,18 +5,16 @@
       <van-tabs v-model="active">
         <van-tab title="未被认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
-            <template v-if="Number(item.number)">
-              <img :src="item.img" alt class="main_img" />
-              <p v-if="item.mapped_values.name">
-                {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
-                <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
-              </p>
-              <p>数量:{{item.number}}</p>
-              <p v-if="item.time">{{item.time}}</p>
-              <button class="mian_button button">
-                <span class="claiming">待认领</span>
-              </button>
-            </template>
+            <img :src="item.img" alt class="main_img" />
+            <p v-if="item.mapped_values.name">
+              {{item.mapped_values.name.exported_value[0]}}捐赠的物资：
+              <span>{{item.mapped_values.supplies_name.exported_value[0]}}</span>
+            </p>
+            <p>数量:{{item.number}}</p>
+            <p v-if="item.time">{{item.time}}</p>
+            <button class="mian_button button">
+              <span class="claiming">待认领</span>
+            </button>
           </div>
         </van-tab>
         <van-tab title="已认领">
@@ -174,7 +172,7 @@ export default {
       date: "",
       dataID: "",
       option_id: "",
-      supplies_number_id:"",
+      supplies_number_id: "",
       uptoken: "",
       active: "0",
       connect_img: "",
@@ -193,7 +191,8 @@ export default {
           if (
             element.mapped_values.review_street_state.exported_value[0] ===
               "已通过" &&
-            element.mapped_values.claim_state.exported_value[0] === "未被认领"
+            element.mapped_values.supplies_number &&
+            element.mapped_values.supplies_number.exported_value[0] !== "0"
           ) {
             element.entries.forEach((el) => {
               if (el.attachment) {
@@ -202,7 +201,6 @@ export default {
               }
             });
             element.number =
-              element.mapped_values.supplies_number &&
               element.mapped_values.supplies_number.exported_value[0];
             element.time = element.created_at.slice(0, 10);
             this.claimList.push(element);
@@ -301,7 +299,7 @@ export default {
       el.entries.forEach((element) => {
         if (element.field_id === 9262) {
           this.option_id = element.id;
-        }else if(element.field_id === 9326){
+        } else if (element.field_id === 9326) {
           this.supplies_number_id = element.id;
         }
       });
