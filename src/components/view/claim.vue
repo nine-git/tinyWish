@@ -163,15 +163,20 @@ export default {
       finishPhoto: "",
       // 按钮权限
       hasPermission: "",
+      numberFeildList: [
+        "name",
+        "total_number",
+        "rest_number",
+        "success_number",
+      ],
+      numberFeild: [],
+      formId: 128,
     };
   },
   watch: {
     fromData: {
       handler(fromData) {
         const user_tags = localStorage.user_tags || "";
-        console.log("watch^");
-        console.log(user_tags);
-        console.log(fromData.community);
         this.hasPermission = user_tags.indexOf(fromData.community) !== -1;
       },
       deep: true,
@@ -306,6 +311,7 @@ export default {
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
           claimCompany: el.mapped_values.claimCompany.exported_value[0],
           community: el.mapped_values.community.exported_value[0],
+          user: el.user.name,
         };
       }
       if (el.mapped_values.finishPhoto) {
@@ -382,7 +388,7 @@ export default {
         }
       });
     },
-    finish(data) {
+    async finish(data) {
       this.date = unit.formatDateTime();
       let payload = {
         response: { entries_attributes: [] },
@@ -409,14 +415,65 @@ export default {
           option_id: 7362,
         }
       );
+      await this.getTableItem();
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
+          const launchData = isLaunch();
+          if (launchData.length) {
+            // 已经发起过心愿--修改表单的值
+
+          } else {
+            // 创建一条新数据
+            const requestData = this.createRequstData(this.numberFeild);
+            api.createFormsAmendAPI(this.formId, requestData);
+          }
           this.$router.go(0);
         } else {
           this.$toast("上传失败 >_<");
         }
       });
+    },
+    // 筛选出向个人心愿次数申请表的表项
+    async getTableItem() {
+      const { data } = await api.getFormsAPI1(this.formId);
+      this.numberFeild = unit.tableListData(data.fields, this.numberFeildList);
+    },
+    // 用户是否发起过心愿申请
+    async isLaunch() {
+      // 个人心愿申请次数表
+      const { data } = await api.getFormsResponsesAPI1(this.formId);
+      return data.filter((item) => {
+        return item.mapped_values.name.exported_value[0] === this.fromData.user;
+      });
+    },
+    // 创建第一次数量请求数据
+    createRequstData(field) {
+      let payload = {
+        response: { entries_attributes: [] },
+        user_id: localStorage.user_id,
+      };
+      field.forEach((item) => {
+        const tempObj = {
+          field_id: item.field_id,
+        };
+        switch (item.identity_key) {
+          case "name":
+            tempObj.field_value = this.fromData.user;
+            break;
+          case "totalNum":
+            tempObj.field_value = 2;
+            break;
+          case "residueNum":
+            tempObj.field_value = 1;
+            break;
+          case "succeedNum":
+            tempObj.field_value = 1;
+            break;
+        }
+        payload.response.entries_attributes.push(tempObj);
+      });
+      return payload;
     },
   },
 };
