@@ -174,7 +174,7 @@ export default {
       date: "",
       dataID: "",
       option_id: "",
-      supplies_number_id:"",
+      supplies_number_id: "",
       uptoken: "",
       active: "0",
       connect_img: "",
@@ -193,7 +193,10 @@ export default {
           if (
             element.mapped_values.review_street_state.exported_value[0] ===
               "已通过" &&
-            element.mapped_values.claim_state.exported_value[0] === "未被认领"
+            element.mapped_values.claim_state.exported_value[0] ===
+              "未被认领" &&
+            unit.dateFormat("YYYY-mm-dd") <=
+              element.mapped_values.supplies_time.exported_value[0]
           ) {
             element.entries.forEach((el) => {
               if (el.attachment) {
@@ -238,7 +241,10 @@ export default {
           if (
             element.mapped_values.review_street_state.exported_value[0] ===
               "已通过" &&
-            element.mapped_values.claim_state.exported_value[0] === "已失效"
+            element.mapped_values.claim_state.exported_value[0] ===
+              "未被认领" &&
+            unit.dateFormat("YYYY-mm-dd") >
+              element.mapped_values.supplies_time.exported_value[0]
           ) {
             element.entries.forEach((el) => {
               if (el.attachment) {
@@ -301,7 +307,7 @@ export default {
       el.entries.forEach((element) => {
         if (element.field_id === 9262) {
           this.option_id = element.id;
-        }else if(element.field_id === 9326){
+        } else if (element.field_id === 9326) {
           this.supplies_number_id = element.id;
         }
       });
