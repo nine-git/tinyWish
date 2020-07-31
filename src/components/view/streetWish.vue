@@ -123,10 +123,8 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
-      //默认图片路径
-      defaultwishPhoto:
-        "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596",
-    };
+      myCommunity:localStorage.getItem('user_tags').split(",")||''
+      };
   },
   methods: {
     //通过的函数
@@ -201,7 +199,6 @@ export default {
         this.formSumData = res.data;
         if (res.status === 200) {
           this.formNameData.forEach((item) => {
-
             if (item.identity_key === "streetAuditStatus") {
               this.formData.audit.idStreet = item.id;
               item.options.forEach((item) => {
@@ -353,107 +350,9 @@ export default {
     //  获取心愿审核的数据
     api.getFormsResponsesAPI("328").then((res) => {
       this.formSumData = res.data;
-      res.data.forEach((item) => {
-        let objData = {
-          id: "",
-          audit: { id: "", status: "", option_id: "" },
-          pepole: { name: "", field_id: "" },
-          creatTime: "",
-          img_url: "",
-        };
-        //  对象创建的时间
-        objData.creatTime = unit.dateFormat(
-          "YYYY-mm-dd HH:MM",
-          item.created_at
-        );
-        //  对象的id
-        objData.id = item.id;
-        //  对象的社区状态和option_id
-        if (item.mapped_values.auditStatus) {
-          objData.audit.status = item.mapped_values.auditStatus.value[0].value;
-          objData.audit.option_id = item.mapped_values.auditStatus.value[0].id;
-        } else {
-          objData.audit.status = "待审核";
-          this.formNameData.forEach((item) => {
-            if (item.identity_key === "auditStatus") {
-              item.options.forEach((item) => {
-                if (item.value === "待审核") {
-                  objData.audit.option_id = item.id;
-                }
-              });
-            }
-          });
-          objData.audit.id = "";
-        }
-        //  对象的街道办状态和option_id
-
-        if (item.mapped_values.streetAuditStatus) {
-          objData.audit.statusStreet =
-            item.mapped_values.streetAuditStatus.value[0].value;
-          objData.audit.option_idStreet =
-            item.mapped_values.streetAuditStatus.value[0].id;
-        } else {
-          objData.audit.statusStreet = "待审核";
-          this.formNameData.forEach((item) => {
-            if (item.identity_key === "streetAuditStatus") {
-              item.options.forEach((item) => {
-                if (item.value === "待审核") {
-                  objData.audit.option_idStreet = item.id;
-                }
-              });
-            }
-          });
-          objData.audit.idStreet = "";
-        }
-        //对象的心愿描述内容
-        objData.pepole.wishDesc = item.mapped_values.wishDesc.value[0];
-        objData.pepole.community = item.mapped_values.community.value[0].value;
-        objData.pepole.familyAddr = item.mapped_values.familyAddr.value[0];
-        objData.pepole.familyDesc = item.mapped_values.familyDesc.value[0];
-        objData.pepole.tel = item.mapped_values.tel.value[0];
-        objData.pepole.idCard = item.mapped_values.idCard.value[0];
-        if (item.mapped_values.street_retrun_reject) {
-          objData.pepole.rejectDesc =
-            item.mapped_values.street_retrun_reject.value[0];
-
-        }
-        for (let y = 0; y < item.entries.length; y++) {
-          //  对象的图片路径
-          if (item.entries[y].attachment) {
-            let str = item.entries[y].attachment.download_url;
-            let url = str.slice(0, str.indexOf("?"));
-            objData.img_url = url;
-          }
-          //  对象的名字和field_id
-          if (item.mapped_values.name.value[0] === item.entries[y].value) {
-            objData.pepole.name = item.entries[y].value || "";
-            objData.pepole.field_id = item.entries[y].field_id;
-          }
-          //  对象状态的field_id
-          if (objData.audit.statusStreet === item.entries[y].value) {
-            objData.audit.idStreet = item.entries[y].id;
-          }
-        }
-        if (!objData.img_url) {
-          objData.img_url = this.defaultwishPhoto;
-        }
-        if (
-          objData.audit.statusStreet === "待审核" &&
-          objData.audit.status === "已通过"
-        ) {
-          this.auditFormData.push(objData);
-        } else if (
-          objData.audit.statusStreet === "已通过" &&
-          objData.audit.status === "已通过"
-        ) {
-          this.passFormData.push(objData);
-        } else if (
-          objData.audit.statusStreet === "已退回" &&
-          objData.audit.status === "已通过"
-        ) {
-          this.unpassFormData.push(objData);
-        }
-      });
+      this.auditFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"待审核")
+      this.passFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已通过")
+      this.unpassFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已退回")
     });
   },
 };

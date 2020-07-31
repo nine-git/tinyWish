@@ -120,10 +120,8 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
-      //默认图片路径
-      defaultwishPhoto:
-        "http://fs-material.yqfw.cdyoue.com/25925-1594178327-226796841ca9c183c658635e82ec112c-1594178328596",
-    };
+      myCommunity:localStorage.getItem('user_tags').split(",")||''
+     };
   },
   methods: {
     //通过的函数
@@ -197,6 +195,7 @@ export default {
         this.show = false;
         this.formSumData = res.data;
         if (res.status === 200) {
+          //社区通过审核给街道办提醒
           this.formNameData.forEach((item) => {
             if (item.identity_key === "auditStatus") {
               this.formData.audit.id = item.id;
@@ -314,8 +313,7 @@ export default {
               news_entity: {
                 title: "微心愿",
                 description: "不好意思，您的心愿不满足审核条件！",
-                picurl:
-                  "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
+                picurl: "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
               },
             };
             api.postPushWeChat(pushData, headers).then((res) => {
@@ -344,79 +342,10 @@ export default {
     });
     //  获取心愿审核的数据
     api.getFormsResponsesAPI("328").then((res) => {
-      console.log(res);
       this.formSumData = res.data;
-      res.data.forEach((item) => {
-        let objData = {
-          id: "",
-          audit: { id: "", status: "", option_id: "" },
-          pepole: { name: "", field_id: "" },
-          creatTime: "",
-          img_url: "",
-        };
-        //  对象创建的时间
-        objData.creatTime = unit.dateFormat(
-          "YYYY-mm-dd HH:MM",
-          item.created_at
-        );
-        //  对象的id
-        objData.id = item.id;
-        //  对象的状态和option_id
-        if (item.mapped_values.auditStatus) {
-          objData.audit.status = item.mapped_values.auditStatus.value[0].value;
-          objData.audit.option_id = item.mapped_values.auditStatus.value[0].id;
-        } else {
-          objData.audit.status = "待审核";
-          this.formNameData.forEach((item) => {
-            if (item.identity_key === "auditStatus") {
-              item.options.forEach((item) => {
-                if (item.value === "待审核") {
-                  objData.audit.option_id = item.id;
-                }
-              });
-            }
-          });
-          objData.audit.id = "";
-        }
-        //对象的心愿描述内容
-        objData.pepole.wishDesc = item.mapped_values.wishDesc.value[0];
-        objData.pepole.community = item.mapped_values.community.value[0].value;
-        objData.pepole.familyAddr = item.mapped_values.familyAddr.value[0];
-        objData.pepole.familyDesc = item.mapped_values.familyDesc.value[0];
-
-        objData.pepole.tel = item.mapped_values.tel.value[0];
-        objData.pepole.idCard = item.mapped_values.idCard.value[0];
-        if (item.mapped_values.rejectDesc) {
-          objData.pepole.rejectDesc = item.mapped_values.rejectDesc.value[0];
-        }
-        for (let y = 0; y < item.entries.length; y++) {
-          //  对象的图片路径
-          if (item.entries[y].attachment) {
-            let str = item.entries[y].attachment.download_url;
-            let url = str.slice(0, str.indexOf("?"));
-            objData.img_url = url;
-          }
-          //  对象的名字和field_id
-          if (item.mapped_values.name.value[0] === item.entries[y].value) {
-            objData.pepole.name = item.entries[y].value || "";
-            objData.pepole.field_id = item.entries[y].field_id;
-          }
-          //  对象状态的field_id
-          if (objData.audit.status === item.entries[y].value) {
-            objData.audit.id = item.entries[y].id;
-          }
-        }
-        if (!objData.img_url) {
-          objData.img_url = this.defaultwishPhoto;
-        }
-        if (objData.audit.status === "待审核") {
-          this.auditFormData.push(objData);
-        } else if (objData.audit.status === "已通过") {
-          this.passFormData.push(objData);
-        } else if (objData.audit.status === "已退回") {
-          this.unpassFormData.push(objData);
-        }
-      });
+      this.auditFormData=unit.createdObj('status',this.formNameData,this.formSumData,'待审核',this.myCommunity)
+      this.passFormData=unit.createdObj('status',this.formNameData,this.formSumData,'已通过',this.myCommunity)
+      this.unpassFormData=unit.createdObj('status',this.formNameData,this.formSumData,'已退回',this.myCommunity)
     });
   },
 };
