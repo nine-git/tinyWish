@@ -183,7 +183,6 @@ export default {
     claimHeader,
   },
   mounted() {
-    this.isLaunch()
     document.title = "认领心愿";
     api.getFormsResponsesAPI(328).then((res) => {
       res = res.data;
