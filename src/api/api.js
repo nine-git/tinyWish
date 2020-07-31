@@ -38,6 +38,11 @@ export default {
     headers.Authorization=youYiHeader.Authorization
     return http.post("/api/v4/pushes/wechat", data, headers);
   },
+  // 微信通知桂溪消息
+  postPushGXWeChat(data, headers) {
+    headers.Authorization=gxHeaders.Authorization
+    return http.post("/v4/pushes/wechat", data, headers);
+  },
   // 登录oauth
 
   getUserAPI(token) {

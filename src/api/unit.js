@@ -190,12 +190,12 @@ export default {
 //  传送信息对象
   createdWeixin(openids,title,description,picurl,url){
     return {
-      openids,
-      news_entity: {
-        title,
-        description,
-        picurl,
-        url
+      "openids":openids,
+      "news_entity": {
+        "title":title,
+        "description":description,
+        "picurl":picurl,
+        "url":url
       },}
   }
 }
