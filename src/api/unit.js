@@ -2,7 +2,7 @@
 // 公用方法
 export default {
   // 构建数据对象
-  listData (data) {
+  listData(data) {
     let tableList = []
     data.forEach(element => {
       let tableObjData = {}
@@ -17,7 +17,7 @@ export default {
   },
 
   // 构建传输对象
-  tableListData (fields, orderFieldList) {
+  tableListData(fields, orderFieldList) {
     let tableList = []
     orderFieldList.forEach(element => {
       let field = fields.find(field => field.identity_key === element)
@@ -48,7 +48,7 @@ export default {
     return tableList
   },
   // 获取当前时间
-  formatDateTime () {
+  formatDateTime() {
     let date = new Date()
     let y = date.getFullYear()
     let MM = date.getMonth() + 1
@@ -62,9 +62,9 @@ export default {
 
     return y + '-' + MM + '-' + d + ' ' + h + ':' + m
   },
-//  重构时间（时间格式，时间）
+  //  重构时间（时间格式，时间）
   dateFormat(fmt, date) {
-    var date = new Date(date);
+    var date = date ? new Date(date) : new Date();
     var ret;
     const opt = {
       "Y+": date.getFullYear().toString(),        // 年
@@ -84,26 +84,26 @@ export default {
     return fmt;
   },
   // 解析图片地址
-  getImgUrl(str){
+  getImgUrl(str) {
     return str.match(/(http?.+)\?/)[1]
   },
-//  构建审核页面的对象
-  createdObj(myStatus,formNameData,data,auditStatus,communityStr) {
-    let newData=[];
-    let myCommunity=''
-    let defaultwishPhoto="http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
-    data.some(item=>{
-      if (communityStr){
-        communityStr.some(communityItem=>{
-          if (communityItem===item.mapped_values.community.value[0].value){
+  //  构建审核页面的对象
+  createdObj(myStatus, formNameData, data, auditStatus, communityStr) {
+    let newData = [];
+    let myCommunity = ''
+    let defaultwishPhoto = "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+    data.some(item => {
+      if (communityStr) {
+        communityStr.some(communityItem => {
+          if (communityItem === item.mapped_values.community.value[0].value) {
             myCommunity = communityItem;
             return true;
           }
         })
       }
     })
-      data.forEach(item=>{
-      let objData = {audit: { }, pepole: { }};
+    data.forEach(item => {
+      let objData = { audit: {}, pepole: {} };
       objData.creatTime = this.dateFormat("YYYY-mm-dd HH:MM", item.created_at);
       objData.id = item.id;
       objData.pepole.wishDesc = item.mapped_values.wishDesc.value[0];
@@ -173,16 +173,17 @@ export default {
         objData.img_url = defaultwishPhoto;
       }
       switch (myStatus) {
-        case 'status':if (objData.audit.status === auditStatus && objData.pepole.community === myCommunity){
+        case 'status': if (objData.audit.status === auditStatus && objData.pepole.community === myCommunity) {
           newData.push(objData)
-        }else if (objData.audit.status === auditStatus && !myCommunity){
+        } else if (objData.audit.status === auditStatus && !myCommunity) {
           newData.push(objData)
-        };break;
-        case 'statusStreet':if (objData.audit.statusStreet === auditStatus && objData.pepole.community === myCommunity){
+        }; break;
+        case 'statusStreet': if (objData.audit.statusStreet === auditStatus && objData.pepole.community === myCommunity) {
           newData.push(objData)
         }else if (objData.audit.statusStreet === auditStatus && !myCommunity){
+
           newData.push(objData)
-        };break;
+        }; break;
       }
     })
     return newData
