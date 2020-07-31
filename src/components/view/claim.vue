@@ -112,7 +112,7 @@
                 />
               </p>
             </div>
-            <button @click="finish(tableData)" class="popup_button button">资料提交</button>
+            <button @click="finish(tableData)" class="popup_button button" v-if="hasPermission">资料提交</button>
           </div>
           <div v-else>
             <p class="popup_img_title">交接照片：</p>
@@ -161,7 +161,21 @@ export default {
       uptoken: "",
       active: 0,
       finishPhoto: "",
+      // 按钮权限
+      hasPermission: "",
     };
+  },
+  watch: {
+    fromData: {
+      handler(fromData) {
+        const user_tags = localStorage.user_tags || "";
+        console.log("watch^");
+        console.log(user_tags);
+        console.log(fromData.community);
+        this.hasPermission = user_tags.indexOf(fromData.community) !== -1;
+      },
+      deep: true,
+    },
   },
   components: {
     claimHeader,
@@ -241,13 +255,16 @@ export default {
 
         api.postQiNiuApi(data, headers).then((res) => {
           if (res.status === 200) {
+            if (!this.hasPermission) {
+              return;
+            }
             let payload = {
               response: { entries_attributes: [] },
             };
             payload.response.entries_attributes.push({
               field_id: 9189,
               value: "附件",
-              value_id: res.data.id
+              value_id: res.data.id,
             });
             // 发请求上传图片
             api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
@@ -288,6 +305,7 @@ export default {
           claimer: el.mapped_values.claimer.exported_value[0],
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
           claimCompany: el.mapped_values.claimCompany.exported_value[0],
+          community: el.mapped_values.community.exported_value[0],
         };
       }
       if (el.mapped_values.finishPhoto) {
