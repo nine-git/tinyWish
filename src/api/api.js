@@ -15,6 +15,10 @@ export default {
   putFormsAmendAPI(tableID, dataID, data) {
     return http.put(`/api/v4/forms/${tableID}/responses/${dataID}`, data);
   },
+  // 创建表单数据
+  createFormsAmendAPI(tableId,data) {
+    return http.post(`/api/v4/forms/${tableId}/responses`,data);
+  },
   // 上传附件
   getUptokenAPI() {
     return http.get(`/api/v4/attachments/uptoken?purpose=create_responses`);

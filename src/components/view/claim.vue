@@ -163,15 +163,19 @@ export default {
       finishPhoto: "",
       // 按钮权限
       hasPermission: "",
+      numberFeildList: [
+        "name",
+        "total_number",
+        "rest_number",
+        "success_number",
+      ],
+      numberFeild: [],
     };
   },
   watch: {
     fromData: {
       handler(fromData) {
         const user_tags = localStorage.user_tags || "";
-        console.log("watch^");
-        console.log(user_tags);
-        console.log(fromData.community);
         this.hasPermission = user_tags.indexOf(fromData.community) !== -1;
       },
       deep: true,
@@ -181,6 +185,10 @@ export default {
     claimHeader,
   },
   mounted() {
+    this.getTableItem();
+    this.isLaunch();
+    const requestData = this.createRequstData(this.numberFeild);
+    api.createFormsAmendAPI(339, requestData);
     document.title = "认领心愿";
     api.getFormsResponsesAPI(328).then((res) => {
       res = res.data;
@@ -306,6 +314,7 @@ export default {
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
           claimCompany: el.mapped_values.claimCompany.exported_value[0],
           community: el.mapped_values.community.exported_value[0],
+          user: el.user.name,
         };
       }
       if (el.mapped_values.finishPhoto) {
@@ -412,11 +421,63 @@ export default {
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
+          const launchData = isLaunch();
+          if (launchData.length) {
+            // 已经发起过心愿--修改表单的值
+          } else {
+            // 创建一条新数据
+            const requestData = this.createRequstData(this.numberFeild);
+            api.createFormsAmendAPI(339, requestData);
+          }
           this.$router.go(0);
         } else {
           this.$toast("上传失败 >_<");
         }
       });
+    },
+    // 筛选出向个人心愿次数申请表的表项
+    async getTableItem() {
+      const { data } = await api.getFormsAPI(339);
+      console.log(data);
+      this.numberFeild = unit.tableListData(data.fields, this.numberFeildList);
+      console.log(this.numberFeild);
+    },
+    // 用户是否发起过心愿申请
+    async isLaunch() {
+      // 个人心愿申请次数表
+      const { data } = await api.getFormsResponsesAPI(339);
+      console.log(data);
+      return data.filter((item) => {
+        return item.mapped_values.name.exported_value[0] === this.fromData.user;
+      });
+    },
+    // 创建第一次数量请求数据
+    createRequstData(field) {
+      let payload = {
+        response: { entries_attributes: [] },
+        user_id: localStorage.user_id,
+      };
+      field.forEach((item) => {
+        const tempObj = {
+          field_id: item.field_id,
+        };
+        switch (item.identity_key) {
+          case "name":
+            tempObj.field_value = this.fromData.user;
+            break;
+          case "total_number":
+            tempObj.field_value = 2;
+            break;
+          case "rest_number":
+            tempObj.field_value = 1;
+            break;
+          case "success_number":
+            tempObj.field_value = 1;
+            break;
+        }
+        payload.response.entries_attributes.push(tempObj);
+      });
+      return payload;
     },
   },
 };
