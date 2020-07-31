@@ -170,6 +170,7 @@ export default {
         "success_number",
       ],
       numberFeild: [],
+      formId: 128,
     };
   },
   watch: {
@@ -185,10 +186,6 @@ export default {
     claimHeader,
   },
   mounted() {
-    this.getTableItem();
-    this.isLaunch();
-    const requestData = this.createRequstData(this.numberFeild);
-    api.createFormsAmendAPI(339, requestData);
     document.title = "认领心愿";
     api.getFormsResponsesAPI(328).then((res) => {
       res = res.data;
@@ -391,7 +388,7 @@ export default {
         }
       });
     },
-    finish(data) {
+    async finish(data) {
       this.date = unit.formatDateTime();
       let payload = {
         response: { entries_attributes: [] },
@@ -418,16 +415,18 @@ export default {
           option_id: 7362,
         }
       );
+      await this.getTableItem();
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
           const launchData = isLaunch();
           if (launchData.length) {
             // 已经发起过心愿--修改表单的值
+
           } else {
             // 创建一条新数据
             const requestData = this.createRequstData(this.numberFeild);
-            api.createFormsAmendAPI(339, requestData);
+            api.createFormsAmendAPI(this.formId, requestData);
           }
           this.$router.go(0);
         } else {
@@ -437,16 +436,13 @@ export default {
     },
     // 筛选出向个人心愿次数申请表的表项
     async getTableItem() {
-      const { data } = await api.getFormsAPI(339);
-      console.log(data);
+      const { data } = await api.getFormsAPI1(this.formId);
       this.numberFeild = unit.tableListData(data.fields, this.numberFeildList);
-      console.log(this.numberFeild);
     },
     // 用户是否发起过心愿申请
     async isLaunch() {
       // 个人心愿申请次数表
-      const { data } = await api.getFormsResponsesAPI(339);
-      console.log(data);
+      const { data } = await api.getFormsResponsesAPI1(this.formId);
       return data.filter((item) => {
         return item.mapped_values.name.exported_value[0] === this.fromData.user;
       });
@@ -465,13 +461,13 @@ export default {
           case "name":
             tempObj.field_value = this.fromData.user;
             break;
-          case "total_number":
+          case "totalNum":
             tempObj.field_value = 2;
             break;
-          case "rest_number":
+          case "residueNum":
             tempObj.field_value = 1;
             break;
-          case "success_number":
+          case "succeedNum":
             tempObj.field_value = 1;
             break;
         }
