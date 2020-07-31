@@ -180,11 +180,23 @@ export default {
         }; break;
         case 'statusStreet': if (objData.audit.statusStreet === auditStatus && objData.pepole.community === myCommunity) {
           newData.push(objData)
-        } else if (objData.audit.status === auditStatus && !myCommunity) {
+        }else if (objData.audit.statusStreet === auditStatus && !myCommunity){
+
           newData.push(objData)
         }; break;
       }
     })
     return newData
+  },
+//  传送信息对象
+  createdWeixin(openids,title,description,picurl,url){
+    return {
+      openids,
+      news_entity: {
+        title,
+        description,
+        picurl,
+        url
+      },}
   }
 }

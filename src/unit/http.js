@@ -27,14 +27,16 @@ const http = {
     }
     return request(config)
   },
-  put (url, params) {
+  put(url, params, headers) {
     const config = {
-      method: 'put',
-      url: url
-    }
-    if (params) config.data = params
-    return request(config)
+      method: "put",
+      url: url,
+      headers: headers
+    };
+    if (params) config.data = params;
+    return request(config);
   }
+
 }
 // 导出
 export default http

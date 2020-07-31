@@ -353,6 +353,7 @@ export default {
       this.auditFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"待审核")
       this.passFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已通过")
       this.unpassFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已退回")
+    console.log(this.passFormData)
     });
   },
 };
