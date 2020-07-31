@@ -62,6 +62,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         target: "https://yqfw.cdyoue.com",
         changeOrigin: true
       },
+      "/v4": {
+        target: "https://gxzh.cdht.gov.cn/api",
+        changeOrigin: true
+      },
       "/oauth": {
         // target: "http://shandenabian.skylarkly.com",
         target: "https://gxzh.cdht.gov.cn",
