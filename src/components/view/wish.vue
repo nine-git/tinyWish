@@ -201,7 +201,6 @@ export default {
           "您的心愿社区通过啦！",
           "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR")
         if (res.status === 200) {
-
           this.formNameData.forEach((item) => {
             if (item.identity_key === "auditStatus") {
               this.formData.audit.id = item.id;
@@ -213,26 +212,25 @@ export default {
               });
             }
           });
-          api.postPushWeChat(pushData, this.headers)
-            .then(res=>{
-              //社区通过审核给街道办提醒
-              api.getStreetAdmin().then(res => {
-                if (res.status===200){
-                  let streetOpenId=res.data.map(item=>item.openid)
-                  streetOpenId.forEach(item=>{
-                    let pushStreetData=unit.createdWeixin(item,"微心愿",
-                      "有新的心愿社区通过了，您可以在街道办审核啦！",
-                      "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
-                      "http://47.92.163.233:9090/tiny_wish/streetWish"
-                    )
-                    api.postPushWeChat(pushStreetData, this.headers).then(res=>{
-                      this.$toast("已通过");
-                      this.$router.go(0);
-                    })
+          api.postPushWeChat(pushData, this.headers).then((res) => {
+            api.getStreetAdmin().then(res => {
+              if (res.status===200){
+                let streetOpenId=res.data.map(item=>item.openid)
+                streetOpenId.forEach(item=>{
+                  let pushStreetData=unit.createdWeixin(item,"微心愿",
+                    "有新的心愿社区通过了，您可以在街道办审核啦！",
+                    "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
+                    "http://47.92.163.233:9090/tiny_wish/streetWish"
+                  )
+                  api.postPushGXWeChat(pushStreetData, this.headers).then(res=>{
+                    this.$toast("已通过");
+                    //this.$router.go(0);
                   })
-                }
-              })
-            });
+                })
+              }
+            })
+
+          });
         } else {
           this.$toast("通过失败 >_<");
         }
