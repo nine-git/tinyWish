@@ -12,6 +12,7 @@ export default {
       client_id:
         "c2067b9e5cf2c7b4f2006d84761409ddec8dcbad329f2a139de207595db3f193",
       code: "http://localhost:8080/tiny_wish/code",
+      // code: "http://47.92.163.233:9090/tiny_wish/code",
     };
   },
   mounted() {
