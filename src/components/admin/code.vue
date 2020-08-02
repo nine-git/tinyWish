@@ -33,6 +33,7 @@ export default {
         code: this.code,
         grant_type: "authorization_code",
         redirect_uri: "http://localhost:8080/tiny_wish/code",
+        // redirect_uri: "http://47.92.163.233:9090/tiny_wish/code",
       },
     }).then((res) => {
       let token = res.data.access_token;
