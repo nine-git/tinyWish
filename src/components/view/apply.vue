@@ -2,7 +2,7 @@
   <div class="apply">
     <claim-header :title="title"></claim-header>
     <div class="main">
-      <van-tabs v-model="active">
+      <van-tabs v-model="active" @change="changeTab">
         <van-tab title="未被认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
             <template v-if="Number(item.number)">
@@ -75,7 +75,8 @@
         <van-field autosize label="联系电话：" readonly v-model="fromData.phone" />
         <van-field label="物资名称：" readonly type="text" v-model="fromData.supplies_name" />
 
-        <div v-if="!fromData.claimer">
+        <!-- 未认领 -->
+        <div v-if="tabInd===0">
           <div :key="item.identity_key" v-for="item in tableData">
             <div v-if="item.type === 'Field::TextField'">
               <p v-if="item.identity_key ==='claimer'">
@@ -106,14 +107,12 @@
           </div>
           <button @click="send(tableData)" class="popup_button button">确认认领</button>
         </div>
-        <!-- 待认领 -->
-        <div v-else-if="fromData.claimer">
+        <!-- 已认领 && 已完成 -->
+        <div v-if="tabInd===1||tabInd===2">
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
           <van-field label="认领人电话：" readonly type="text" v-model="fromData.claim_phone" />
           <van-field label="认领时间：" readonly type="text" v-model="fromData.claim_time" />
-
-          <!-- 交接模块 -->
-          <div v-if="!fromData.connect_img">
+          <div v-if="tabInd===1">
             <div :key="item.identity_key" v-for="item in tableData">
               <div v-if="item.identity_key ==='connect_img'">
                 <p class="finishPhoto">上传交接图片：</p>
@@ -128,7 +127,7 @@
                 />
               </p>
             </div>
-            <button @click="finish(tableData)" class="popup_button button">资料提交</button>
+              <button @click="finish(tableData)" class="popup_button button">资料提交</button>
           </div>
           <div v-else>
             <p class="popup_img_title">交接照片：</p>
@@ -178,6 +177,7 @@ export default {
       uptoken: "",
       active: "0",
       connect_img: "",
+      tabInd: 0,
     };
   },
   components: {
@@ -264,6 +264,9 @@ export default {
     });
   },
   methods: {
+    changeTab(index) {
+      this.tabInd = index;
+    },
     // 文件的上传
     afterRead(file) {
       api.getUptokenAPI().then((res) => {
