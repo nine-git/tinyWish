@@ -334,7 +334,7 @@ export default {
         };
         if (el.mapped_values.connect_time) {
           el.entries.forEach((el) => {
-            if (el.field_id == 9267) {
+            if (el.field_id === 9267) {
               let str = el.attachment.download_url;
               this.connect_img = str.slice(0, str.indexOf("?"));
             }
@@ -360,8 +360,8 @@ export default {
       // console.log(data);
       // 获取时间
       this.date = unit.formatDateTime();
-      let supplies_number_obj;
-      let supplies_number = Number(this.fromData.supplies_number);
+      let numberObj;
+      let suppliesNumber = Number(this.fromData.supplies_number);
       let payload = {
         response: { entries_attributes: [] },
       };
@@ -369,7 +369,7 @@ export default {
         if (element.value !== "") {
           // 物资数量
           if (element.identity_key === "supplies_number") {
-            supplies_number_obj = element;
+            numberObj = element;
           }
           // 修改认领状态
           if (
@@ -384,11 +384,11 @@ export default {
         }
       });
       // 物资数量
-      if (supplies_number_obj.value > supplies_number) {
+      if (numberObj.value > suppliesNumber) {
         this.$toast("物资数量不能大于总数量 >_<");
         return;
       }
-      if (supplies_number_obj.value <= 0 || !supplies_number_obj.value) {
+      if (numberObj.value <= 0 || !numberObj.value) {
         this.$toast("物资数量不能小于等于零 >_<");
         return;
       }
@@ -405,7 +405,7 @@ export default {
         },
         {
           id: this.supplies_number_id,
-          value: supplies_number - supplies_number_obj.value,
+          value: suppliesNumber - numberObj.value,
         }
       );
       api.putFormsAmendAPI(this.fromId, this.dataID, payload).then((res) => {
