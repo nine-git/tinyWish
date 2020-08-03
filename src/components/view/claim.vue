@@ -2,7 +2,7 @@
   <div class="claim">
     <claim-header :title="title"></claim-header>
     <div class="main">
-      <van-tabs v-model="active">
+      <van-tabs v-model="active" @change="changeTab">
         <van-tab title="待认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
             <img :src="itemImg" alt class="main_img" />
@@ -60,7 +60,7 @@
 
         <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishDesc" />
 
-        <div v-if="!fromData.claimer">
+        <div v-if="tabInd===0">
           <div :key="item.identity_key" v-for="item in tableData">
             <div v-if="item.type === 'Field::TextField'">
               <p v-if="item.identity_key ==='claimer'">
@@ -91,13 +91,13 @@
           </div>
           <button @click="send(tableData)" class="popup_button button">确认认领</button>
         </div>
-        <div v-else>
+        <div v-if="tabInd===1||tabInd===2">
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
           <van-field label="认领人电话：" readonly type="text" v-model="fromData.claimPhone" />
           <van-field label="认领人单位：" readonly type="text" v-model="fromData.claimCompany" />
 
           <!-- 交接模块 -->
-          <div v-if="!fromData.finishDesc">
+          <div v-if="tabInd===1">
             <div :key="item.identity_key" v-for="item in tableData">
               <div v-if="item.identity_key ==='finishPhoto'">
                 <p class="finishPhoto">上传交接图片：</p>
@@ -163,11 +163,7 @@ export default {
       finishPhoto: "",
       // 按钮权限
       hasPermission: "",
-      numberFeildList: ["name", "totalNum", "residueNum", "succeedNum"],
-      numberFeild: [],
-      formId: 128,
-      successId: "",
-      restId: "",
+      tabInd: 0,
     };
   },
   watch: {
@@ -240,6 +236,9 @@ export default {
     });
   },
   methods: {
+    changeTab(index) {
+      this.tabInd = index;
+    },
     // 文件的上传
     afterRead(file) {
       api.getUptokenAPI().then((res) => {
@@ -316,7 +315,7 @@ export default {
       }
       if (el.mapped_values.finishPhoto) {
         el.entries.forEach((el) => {
-          if (el.field_id == 9189) {
+          if (el.field_id === 9189) {
             let str = el.attachment.download_url;
             this.finishPhoto = str.slice(0, str.indexOf("?"));
           }
@@ -388,7 +387,7 @@ export default {
         }
       });
     },
-    async finish(data) {
+    finish(data) {
       this.date = unit.formatDateTime();
       let payload = {
         response: { entries_attributes: [] },
@@ -415,79 +414,15 @@ export default {
           option_id: 7362,
         }
       );
-      await this.getTableItem();
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
-          const launchData = this.isLaunch();
-          if (launchData.length) {
-            // 已经发起过心愿--修改表单的值
-            const dataItem = launchData[0];
-            let payload = {
-              response: { entries_attributes: [] }
-            };
-            payload.response.entries_attributes.push(
-              {
-                id: this.successId,
-                field_value: Number(dataItem.mapped_values.succeedNum.exported_value[0]) + 1
-              },
-              {
-                id: this.restId,
-                field_value: Number(dataItem.mapped_values.residueNum.exported_value[0]) - 1
-              }
-            )
-            api.putFormsAmendAPI1(this.formId, dataItem.id, payload);
-          } else {
-            // 创建一条新数据
-            const requestData = this.createRequstData(this.numberFeild);
-            api.createFormsAmendAPI(this.formId, requestData);
-          }
+
           this.$router.go(0);
         } else {
           this.$toast("上传失败 >_<");
         }
       });
-    },
-    // 筛选出向个人心愿次数申请表的表项
-    async getTableItem() {
-      const { data } = await api.getFormsAPI1(this.formId);
-      this.numberFeild = unit.tableListData(data.fields, this.numberFeildList);
-    },
-    // 用户是否发起过心愿申请
-    async isLaunch() {
-      // 个人心愿申请次数表
-      const { data } = await api.getFormsResponsesAPI1(this.formId);
-      return data.filter((item) => {
-        return item.mapped_values.name.exported_value[0] === this.fromData.user;
-      });
-    },
-    // 创建第一次数量请求数据
-    createRequstData(field) {
-      let payload = {
-        response: { entries_attributes: [] },
-        user_id: localStorage.user_id,
-      };
-      field.forEach((item) => {
-        const tempObj = {
-          field_id: item.field_id,
-        };
-        switch (item.identity_key) {
-          case "name":
-            tempObj.field_value = this.fromData.user;
-            break;
-          case "totalNum":
-            tempObj.field_value = 2;
-            break;
-          case "residueNum":
-            tempObj.field_value = 1;
-            break;
-          case "succeedNum":
-            tempObj.field_value = 1;
-            break;
-        }
-        payload.response.entries_attributes.push(tempObj);
-      });
-      return payload;
     },
   },
 };
