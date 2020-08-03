@@ -123,7 +123,10 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
-      myCommunity:localStorage.getItem('user_tags').split(",")||''
+      myCommunity:localStorage.getItem('user_tags').split(",")||'',
+      userName:'',
+      formWishNum:[],
+      formWishNameData:[]
       };
   },
   methods: {
@@ -324,8 +327,36 @@ export default {
               },
             };
             api.postPushWeChat(pushData, headers).then((res) => {
-              this.$toast("已退回");
-              this.$router.go(0);
+              let restNumber=''
+              this.formWishNameData.forEach(item=>{
+                if (item.identity_key=="rest_number"){
+                  restNumber=item.id
+                }
+              })
+              this.formWishNum.forEach(item=>{
+                if (item.user.name==this.userName){
+                  let dataID=item.id
+                  item.entries.forEach(item=>{
+                    if (restNumber==item.field_id){
+                      let wishStr={
+                        "response": {
+                          "entries_attributes": [
+                            {
+                              "id": item.id,
+                              "value": item.value+1
+                            }
+                          ]
+                        }
+                      }
+                      api.putFormsAmendAPI1("129",dataID,wishStr).then((res)=>{
+                        this.$toast("已退回");
+                        this.$router.go(0);
+                      })
+
+                    }
+                  })
+                }
+              })
             });
           } else {
             this.$toast("退回失败 >_<");
@@ -342,6 +373,13 @@ export default {
     },
   },
   beforeCreate() {
+    api.getFormsResponsesAPI1("129").then((res)=>{
+      this.formWishNum=res.data
+    })
+    api.getFormsAPI1("129").then((res) => {
+      console.log(res)
+      this.formWishNameData = res.data.fields;
+    });
     //获取心愿表单数据
     api.getFormsAPI("328").then((res) => {
       this.imgItem = unit.getImgUrl(res.data.description);
