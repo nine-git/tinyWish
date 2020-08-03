@@ -303,6 +303,14 @@ export default {
         });
       });
     },
+    // 根据对象获取值
+    getValue(arr, obj) {
+      let tempObj = {}
+      arr.forEach(item => {
+        tempObj[item] = obj.mapped_values[item].exported_value[0]
+      })
+      return tempObj
+    },
     claim(el) {
       el.entries.forEach((element) => {
         if (element.field_id === 9262) {
