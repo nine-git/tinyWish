@@ -131,7 +131,6 @@
 import claimHeader from "../component/header";
 import api from "../../api/api";
 import unit from "@/api/unit";
-import formId from "@/settings/table.js";
 
 export default {
   name: "wish",
@@ -164,9 +163,6 @@ export default {
       finishPhoto: "",
       // 按钮权限
       hasPermission: "",
-      numberFeildList: ["success_number"],
-      numberFeild: [],
-      entries: [],
       tabInd: 0,
     };
   },
@@ -237,7 +233,6 @@ export default {
       this.itemImg = unit.getImgUrl(res.data.description);
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
-      this.entries = res.data.entries;
     });
   },
   methods: {
@@ -388,7 +383,7 @@ export default {
         }
       });
     },
-    async finish(data) {
+    finish(data) {
       this.date = unit.formatDateTime();
       let payload = {
         response: { entries_attributes: [] },
@@ -415,43 +410,14 @@ export default {
           option_id: 7362,
         }
       );
-      await this.getTableItem();
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
-          this.getDataItem().then((res) => {
-            res.length && this.updateNum(res[0]);
-          });
           this.$router.go(0);
         } else {
           this.$toast("上传失败 >_<");
         }
       });
-    },
-    // 筛选出向个人心愿次数申请表的表项
-    async getTableItem() {
-      const { data } = await api.getFormsAPI1(formId.wishNum);
-      this.numberFeild = unit.tableListData(data.fields, this.numberFeildList);
-    },
-    // 获取当前用户的申请次数数据
-    async getDataItem() {
-      // 个人心愿申请次数表
-      const { data } = await api.getFormsResponsesAPI1(formId.wishNum);
-      return data.filter((item) => {
-        return item.mapped_values.name.exported_value[0] === this.fromData.user;
-      });
-    },
-    // 更新数量
-    updateNum(dataItem) {
-      let payload = {
-        response: { entries_attributes: [] },
-      };
-      let successNum = dataItem.success_number || 0;
-      payload.response.push({
-        id: unit.getId(dataItem.field_id, this.entries),
-        value: successNum + 1,
-      });
-      api.putFormsAmendAPI1(formId.wishNum, dataItem.id, payload);
     },
   },
 };
