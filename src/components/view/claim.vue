@@ -116,7 +116,7 @@
           </div>
           <div v-else>
             <p class="popup_img_title">交接照片：</p>
-            <img :src="fromData.finishPhoto" alt class="popup_img" />
+            <img v-for="item in finishPhoto" :src="item" :key="item" alt class="popup_img" />
 
             <van-field label="交接描述：" readonly type="text" v-model="fromData.finishDesc" />
             <van-field label="交接时间：" readonly type="text" v-model="fromData.finishDateTime" />
@@ -131,6 +131,7 @@
 import claimHeader from "../component/header";
 import api from "../../api/api";
 import unit from "@/api/unit";
+import formId from "@/settings/table"
 
 export default {
   name: "wish",
@@ -160,7 +161,7 @@ export default {
       option_id: "",
       uptoken: "",
       active: 0,
-      finishPhoto: "",
+      finishPhoto: [],
       // 按钮权限
       hasPermission: "",
       tabInd: 0,
@@ -180,7 +181,7 @@ export default {
   },
   mounted() {
     document.title = "认领心愿";
-    api.getFormsResponsesAPI(328).then((res) => {
+    api.getFormsResponsesAPI(formId.wish).then((res) => {
       res = res.data;
       res.forEach((element) => {
         if (element.mapped_values.streetAuditStatus) {
@@ -229,7 +230,7 @@ export default {
         }
       });
     });
-    api.getFormsAPI(328).then((res) => {
+    api.getFormsAPI(formId.wish).then((res) => {
       this.itemImg = unit.getImgUrl(res.data.description);
       this.fields = res.data.fields;
       this.tableData = unit.tableListData(this.fields, this.orderFieldList);
@@ -268,7 +269,7 @@ export default {
               value_id: res.data.id,
             });
             // 发请求上传图片
-            api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+            api.putFormsAmendAPI(formId.wish, this.dataID, payload).then((res) => {
               if (res.status === 200) {
                 this.$toast("上传成功 ✨");
               } else {
@@ -285,10 +286,6 @@ export default {
       el.entries.forEach((element) => {
         if (element.field_id === 9190) {
           this.option_id = element.id;
-        } else if (element.field_id === 6704) {
-          this.successId = element.id;
-        } else if (element.field_id === 6705) {
-          this.restId = element.id;
         }
       });
       this.show = true;
@@ -314,10 +311,11 @@ export default {
         };
       }
       if (el.mapped_values.finishPhoto) {
+        this.finishPhoto = [];
         el.entries.forEach((el) => {
           if (el.field_id === 9189) {
             let str = el.attachment.download_url;
-            this.finishPhoto = str.slice(0, str.indexOf("?"));
+            this.finishPhoto.push(str.slice(0, str.indexOf("?")));
           }
         });
         this.fromData = {
@@ -364,7 +362,7 @@ export default {
           value: this.date,
         }
       );
-      api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+      api.putFormsAmendAPI(formId.wish, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           let headers = {
             "content-type": "application/json",
@@ -414,7 +412,7 @@ export default {
           option_id: 7362,
         }
       );
-      api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
+      api.putFormsAmendAPI(formId.wish, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
 
