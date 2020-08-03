@@ -285,6 +285,10 @@ export default {
       el.entries.forEach((element) => {
         if (element.field_id === 9190) {
           this.option_id = element.id;
+        } else if (element.field_id === 6704) {
+          this.successId = element.id;
+        } else if (element.field_id === 6705) {
+          this.restId = element.id;
         }
       });
       this.show = true;
@@ -413,6 +417,7 @@ export default {
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
+
           this.$router.go(0);
         } else {
           this.$toast("上传失败 >_<");
