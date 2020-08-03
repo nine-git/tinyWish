@@ -123,9 +123,19 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
+      userName:'',
+      formWishNum:[],
+      formWishNameData:[]
     };
   },
   mounted() {
+    api.getFormsResponsesAPI1("129").then((res)=>{
+      this.formWishNum=res.data
+    })
+    api.getFormsAPI1("129").then((res) => {
+      console.log(res)
+      this.formWishNameData = res.data.fields;
+    });
     api.getFormsAPI(this.formId).then((res) => {
       this.formNameData = res.data.fields;
     });
@@ -403,8 +413,36 @@ export default {
               },
             };
             api.postPushWeChat(pushData, headers).then((res) => {
-              this.$toast("已退回");
-              this.$router.go(0);
+              let restNumber=''
+              this.formWishNameData.forEach(item=>{
+                if (item.identity_key=="rest_number"){
+                  restNumber=item.id
+                }
+              })
+              this.formWishNum.forEach(item=>{
+                if (item.user.name==this.userName){
+                  let dataID=item.id
+                  item.entries.forEach(item=>{
+                    if (restNumber==item.field_id){
+                      let wishStr={
+                        "response": {
+                          "entries_attributes": [
+                            {
+                              "id": item.id,
+                              "value": item.value+1
+                            }
+                          ]
+                        }
+                      }
+                      api.putFormsAmendAPI1("129",dataID,wishStr).then((res)=>{
+                        this.$toast("已退回");
+                        this.$router.go(0);
+                      })
+
+                    }
+                  })
+                }
+              })
             });
           } else {
             this.$toast("退回失败 >_<");
