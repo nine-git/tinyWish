@@ -2,7 +2,7 @@
   <div class="claim">
     <claim-header :title="title"></claim-header>
     <div class="main">
-      <van-tabs v-model="active">
+      <van-tabs v-model="active" @change="changeTab">
         <van-tab title="待认领">
           <div :key="item.id" @click="claim(item)" class="main_item" v-for="item in claimList">
             <img :src="itemImg" alt class="main_img" />
@@ -60,7 +60,7 @@
 
         <van-field autosize label="心愿描述：" readonly type="textarea" v-model="fromData.wishDesc" />
 
-        <div v-if="!fromData.claimer">
+        <div v-if="tabInd===0">
           <div :key="item.identity_key" v-for="item in tableData">
             <div v-if="item.type === 'Field::TextField'">
               <p v-if="item.identity_key ==='claimer'">
@@ -91,13 +91,13 @@
           </div>
           <button @click="send(tableData)" class="popup_button button">确认认领</button>
         </div>
-        <div v-else>
+        <div v-if="tabInd===1||tabInd===2">
           <van-field label="认领人姓名：" readonly type="text" v-model="fromData.claimer" />
           <van-field label="认领人电话：" readonly type="text" v-model="fromData.claimPhone" />
           <van-field label="认领人单位：" readonly type="text" v-model="fromData.claimCompany" />
 
           <!-- 交接模块 -->
-          <div v-if="!fromData.finishDesc">
+          <div v-if="tabInd===1">
             <div :key="item.identity_key" v-for="item in tableData">
               <div v-if="item.identity_key ==='finishPhoto'">
                 <p class="finishPhoto">上传交接图片：</p>
@@ -131,7 +131,7 @@
 import claimHeader from "../component/header";
 import api from "../../api/api";
 import unit from "@/api/unit";
-import formId from "@/settings/table.js"
+import formId from "@/settings/table.js";
 
 export default {
   name: "wish",
@@ -164,11 +164,10 @@ export default {
       finishPhoto: "",
       // 按钮权限
       hasPermission: "",
-      numberFeildList: [
-        "success_number",
-      ],
+      numberFeildList: ["success_number"],
       numberFeild: [],
-      entries: []
+      entries: [],
+      tabInd: 0,
     };
   },
   watch: {
@@ -242,6 +241,9 @@ export default {
     });
   },
   methods: {
+    changeTab(index) {
+      this.tabInd = index;
+    },
     // 文件的上传
     afterRead(file) {
       api.getUptokenAPI().then((res) => {
@@ -417,9 +419,9 @@ export default {
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
-          this.getDataItem().then(res => {
-            res.length && this.updateNum(res[0])
-          })
+          this.getDataItem().then((res) => {
+            res.length && this.updateNum(res[0]);
+          });
           this.$router.go(0);
         } else {
           this.$toast("上传失败 >_<");
@@ -447,9 +449,9 @@ export default {
       let successNum = dataItem.success_number || 0;
       payload.response.push({
         id: unit.getId(dataItem.field_id, this.entries),
-        value: successNum + 1
-      })
-      api.putFormsAmendAPI1(formId.wishNum, dataItem.id, payload)
+        value: successNum + 1,
+      });
+      api.putFormsAmendAPI1(formId.wishNum, dataItem.id, payload);
     },
   },
 };
