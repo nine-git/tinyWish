@@ -64,21 +64,21 @@ export default {
   },
   //  重构时间（时间格式，时间）
   dateFormat(fmt, date) {
-    var date = date ? new Date(date) : new Date();
+    date = date ? new Date(date) : new Date();
     var ret;
     const opt = {
-      "Y+": date.getFullYear().toString(),        // 年
-      "m+": (date.getMonth() + 1).toString(),     // 月
-      "d+": date.getDate().toString(),            // 日
-      "H+": date.getHours().toString(),           // 时
-      "M+": date.getMinutes().toString(),         // 分
-      "S+": date.getSeconds().toString()          // 秒
+      "Y+": date.getFullYear().toString(), // 年
+      "m+": (date.getMonth() + 1).toString(), // 月
+      "d+": date.getDate().toString(), // 日
+      "H+": date.getHours().toString(), // 时
+      "M+": date.getMinutes().toString(), // 分
+      "S+": date.getSeconds().toString() // 秒
       // 有其他格式化字符需求可以继续添加，必须转化成字符串
     };
     for (var k in opt) {
       ret = new RegExp("(" + k + ")").exec(fmt);
       if (ret) {
-        fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+        fmt = fmt.replace(ret[1], (ret[1].length === 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
       };
     };
     return fmt;
@@ -180,23 +180,28 @@ export default {
         }; break;
         case 'statusStreet': if (objData.audit.statusStreet === auditStatus && objData.pepole.community === myCommunity) {
           newData.push(objData)
-        }else if (objData.audit.statusStreet === auditStatus && !myCommunity){
-
+        } else if (objData.audit.statusStreet === auditStatus && !myCommunity) {
           newData.push(objData)
         }; break;
       }
     })
     return newData
   },
-//  传送信息对象
-  createdWeixin(openids,title,description,picurl,url){
+  //  传送信息对象
+  createdWeixin(openids, title, description, picurl, url) {
     return {
-      "openids":openids,
+      "openids": openids,
       "news_entity": {
-        "title":title,
-        "description":description,
-        "picurl":picurl,
-        "url":url
-      },}
+        "title": title,
+        "description": description,
+        "picurl": picurl,
+        "url": url
+      },
+    }
+  },
+  // 根据feild_id和entries获取id
+  getId(fieldId, entries) {
+    const entriesItem = entries.filter(item => item.field_id === fieldId)
+    return entriesItem.id
   }
 }
