@@ -163,21 +163,18 @@ export default {
       finishPhoto: "",
       // 按钮权限
       hasPermission: "",
-      numberFeildList: [
-        "name",
-        "total_number",
-        "rest_number",
-        "success_number",
-      ],
+      numberFeildList: ["name", "totalNum", "residueNum", "succeedNum"],
       numberFeild: [],
       formId: 128,
+      successId: "",
+      restId: "",
     };
   },
   watch: {
     fromData: {
       handler(fromData) {
-        const user_tags = localStorage.user_tags || "";
-        this.hasPermission = user_tags.indexOf(fromData.community) !== -1;
+        const userTags = localStorage.user_tags || "";
+        this.hasPermission = userTags.indexOf(fromData.community) !== -1;
       },
       deep: true,
     },
@@ -289,6 +286,10 @@ export default {
       el.entries.forEach((element) => {
         if (element.field_id === 9190) {
           this.option_id = element.id;
+        } else if (element.field_id === 6704) {
+          this.successId = element.id;
+        } else if (element.field_id === 6705) {
+          this.restId = element.id;
         }
       });
       this.show = true;
@@ -310,7 +311,6 @@ export default {
           claimer: el.mapped_values.claimer.exported_value[0],
           claimPhone: el.mapped_values.claimPhone.exported_value[0],
           claimCompany: el.mapped_values.claimCompany.exported_value[0],
-          community: el.mapped_values.community.exported_value[0],
           user: el.user.name,
         };
       }
@@ -419,10 +419,24 @@ export default {
       api.putFormsAmendAPI(328, this.dataID, payload).then((res) => {
         if (res.status === 200) {
           this.$toast("上传成功 ✨");
-          const launchData = isLaunch();
+          const launchData = this.isLaunch();
           if (launchData.length) {
             // 已经发起过心愿--修改表单的值
-
+            const dataItem = launchData[0];
+            let payload = {
+              response: { entries_attributes: [] }
+            };
+            payload.response.entries_attributes.push(
+              {
+                id: this.successId,
+                field_value: Number(dataItem.mapped_values.succeedNum.exported_value[0]) + 1
+              },
+              {
+                id: this.restId,
+                field_value: Number(dataItem.mapped_values.residueNum.exported_value[0]) - 1
+              }
+            )
+            api.putFormsAmendAPI1(this.formId, dataItem.id, payload);
           } else {
             // 创建一条新数据
             const requestData = this.createRequstData(this.numberFeild);
