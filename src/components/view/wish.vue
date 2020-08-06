@@ -227,7 +227,7 @@ export default {
                   )
                   api.postPushGXWeChat(pushStreetData, this.headers).then(res=>{
                     this.$toast("已通过");
-                    this.$router.go(0);
+                    //this.$router.go(0);
                   })
                 })
               }
