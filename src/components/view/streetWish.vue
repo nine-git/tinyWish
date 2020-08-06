@@ -225,8 +225,9 @@ export default {
             },
           };
           api.postPushWeChat(pushData, headers).then((res) => {
+            console.log(res)
             this.$toast("已通过");
-            this.$router.go(0);
+            //this.$router.go(0);
           });
         } else {
           this.$toast("通过失败 >_<");
@@ -258,7 +259,7 @@ export default {
             obj.rejectDescId = item.id;
           }
         });
-        if (this.formData.audit.idStreet) {
+        if (this.formData.audit.id) {
           str = {
             response: {
               entries_attributes: [
@@ -382,16 +383,16 @@ export default {
     });
     //获取心愿表单数据
     api.getFormsAPI("328").then((res) => {
+      console.log(res)
       this.imgItem = unit.getImgUrl(res.data.description);
       this.formNameData = res.data.fields;
     });
     //  获取心愿审核的数据
     api.getFormsResponsesAPI("328").then((res) => {
       this.formSumData = res.data;
-      this.auditFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"待审核")
-      this.passFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已通过")
-      this.unpassFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已退回")
-    console.log(this.passFormData)
+      this.auditFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"待审核",this.myCommunity)
+      this.passFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已通过",this.myCommunity)
+      this.unpassFormData=unit.createdObj('statusStreet',this.formNameData,this.formSumData,"已退回",this.myCommunity)
     });
   },
 };

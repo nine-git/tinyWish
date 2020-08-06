@@ -168,6 +168,10 @@ export default {
         if (objData.audit.status === item.entries[y].value) {
           objData.audit.id = item.entries[y].id;
         }
+        //  对象状态的field_id
+        if (objData.audit.statusStreet === item.entries[y].value) {
+          objData.audit.idStreet = item.entries[y].id;
+        }
       }
       if (!objData.img_url) {
         objData.img_url = defaultwishPhoto;
@@ -178,9 +182,9 @@ export default {
         } else if (objData.audit.status === auditStatus && !myCommunity) {
           newData.push(objData)
         }; break;
-        case 'statusStreet': if (objData.audit.statusStreet === auditStatus && objData.pepole.community === myCommunity) {
+        case 'statusStreet': if (objData.audit.statusStreet === auditStatus && objData.pepole.community === myCommunity&&objData.audit.status !== "待审核" ) {
           newData.push(objData)
-        } else if (objData.audit.statusStreet === auditStatus && !myCommunity) {
+        } else if (objData.audit.statusStreet === auditStatus && !myCommunity &&objData.audit.status !== "待审核" ) {
           newData.push(objData)
         }; break;
       }
