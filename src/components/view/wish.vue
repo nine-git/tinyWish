@@ -111,7 +111,7 @@ export default {
       show: false, //弹出框展示
       formId: "328", //表单号
       formSumData: [], //所有的数据
-      imgItem: '', // 心愿图片
+      imgItem: "", // 心愿图片
       formData: {
         audit: { id: "", status: "", option_id: "" },
         pepole: { name: "", field_id: "" },
@@ -120,14 +120,53 @@ export default {
       passFormData: [], //已通过
       unpassFormData: [], //已退回
       formNameData: [], //表单属性(表头的数据)
-      myCommunity:localStorage.getItem('user_tags').split(",")||'',
-      headers : {
+      myCommunity: localStorage.getItem("user_tags").split(",") || "",
+      headers: {
         "content-type": "application/json",
       },
-      userName:'',
-      formWishNum:[],
-      formWishNameData:[]
-     };
+      userName: "",
+      formWishNum: [],
+      formWishNameData: [],
+    };
+  },
+  mounted() {
+    api.getFormsResponsesAPI1("129").then((res) => {
+      this.formWishNum = res.data;
+    });
+    api.getFormsAPI1("129").then((res) => {
+      console.log(res);
+      this.formWishNameData = res.data.fields;
+    });
+    //获取心愿表单数据
+    api.getFormsAPI("328").then((res) => {
+      this.formNameData = res.data.fields;
+      this.imgItem = unit.getImgUrl(res.data.description);
+    });
+    //  获取心愿审核的数据
+    api.getFormsResponsesAPI("328").then((res) => {
+      this.formSumData = res.data;
+      this.auditFormData = unit.createdObj(
+        "status",
+        this.formNameData,
+        this.formSumData,
+        "待审核",
+        this.myCommunity
+      );
+      this.passFormData = unit.createdObj(
+        "status",
+        this.formNameData,
+        this.formSumData,
+        "已通过",
+        this.myCommunity
+      );
+      this.unpassFormData = unit.createdObj(
+        "status",
+        this.formNameData,
+        this.formSumData,
+        "已退回",
+        this.myCommunity
+      );
+    });
   },
   methods: {
     //通过的函数
@@ -200,9 +239,12 @@ export default {
       api.putFormsAmendAPI(this.formId, this.formData.id, str).then((res) => {
         this.show = false;
         this.formSumData = res.data;
-        let pushData = unit.createdWeixin(res.data.user.openid,"微心愿",
+        let pushData = unit.createdWeixin(
+          res.data.user.openid,
+          "微心愿",
           "您的心愿社区通过啦！",
-          "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR")
+          "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+        );
         if (res.status === 200) {
           this.formNameData.forEach((item) => {
             if (item.identity_key === "auditStatus") {
@@ -216,23 +258,26 @@ export default {
             }
           });
           api.postPushWeChat(pushData, this.headers).then((res) => {
-            api.getStreetAdmin().then(res => {
-              if (res.status===200){
-                let streetOpenId=res.data.map(item=>item.openid)
-                streetOpenId.forEach(item=>{
-                  let pushStreetData=unit.createdWeixin(item,"微心愿",
+            api.getStreetAdmin().then((res) => {
+              if (res.status === 200) {
+                let streetOpenId = res.data.map((item) => item.openid);
+                streetOpenId.forEach((item) => {
+                  let pushStreetData = unit.createdWeixin(
+                    item,
+                    "微心愿",
                     "有新的心愿社区通过了，您可以在街道办审核啦！",
                     "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR",
                     "http://47.92.163.233:9090/tiny_wish/streetWish"
-                  )
-                  api.postPushGXWeChat(pushStreetData, this.headers).then(res=>{
-                    this.$toast("已通过");
-                    this.$router.go(0);
-                  })
-                })
+                  );
+                  api
+                    .postPushGXWeChat(pushStreetData, this.headers)
+                    .then((res) => {
+                      this.$toast("已通过");
+                      this.$router.go(0);
+                    });
+                });
               }
-            })
-
+            });
           });
         } else {
           this.$toast("通过失败 >_<");
@@ -304,7 +349,7 @@ export default {
         //退回请求
         api.putFormsAmendAPI(this.formId, this.formData.id, str).then((res) => {
           this.show = false;
-          this.userName=res.data.user.name
+          this.userName = res.data.user.name;
           this.formSumData = res.data;
           if (res.status === 200) {
             this.formNameData.forEach((item) => {
@@ -318,42 +363,45 @@ export default {
                 });
               }
             });
-            let pushData = unit.createdWeixin(res.data.user.openid,'微心愿',
+            let pushData = unit.createdWeixin(
+              res.data.user.openid,
+              "微心愿",
               "不好意思，您的心愿不满足审核条件！",
-              "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR")
+              "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR"
+            );
             api.postPushWeChat(pushData, this.headers).then((res) => {
-              console.log(res)
-              let restNumber=''
-              this.formWishNameData.forEach(item=>{
-                if (item.identity_key=="rest_number"){
-                  restNumber=item.id
+              console.log(res);
+              let restNumber = "";
+              this.formWishNameData.forEach((item) => {
+                if (item.identity_key == "rest_number") {
+                  restNumber = item.id;
                 }
-              })
-              this.formWishNum.forEach(item=>{
-                if (item.user.name==this.userName){
-                  let dataID=item.id
-                  item.entries.forEach(item=>{
-                    if (restNumber==item.field_id){
-                      let wishStr={
-                        "response": {
-                          "entries_attributes": [
+              });
+              this.formWishNum.forEach((item) => {
+                if (item.user.name == this.userName) {
+                  let dataID = item.id;
+                  item.entries.forEach((item) => {
+                    if (restNumber == item.field_id) {
+                      let wishStr = {
+                        response: {
+                          entries_attributes: [
                             {
-                              "id": item.id,
-                              "value": item.value+1
-                            }
-                          ]
-                        }
-                      }
-                      api.putFormsAmendAPI1("129",dataID,wishStr).then((res)=>{
-                        this.$toast("已退回");
-                        this.$router.go(0);
-                      })
-
+                              id: item.id,
+                              value: item.value + 1,
+                            },
+                          ],
+                        },
+                      };
+                      api
+                        .putFormsAmendAPI1("129", dataID, wishStr)
+                        .then((res) => {
+                          this.$toast("已退回");
+                          this.$router.go(0);
+                        });
                     }
-                  })
+                  });
                 }
-              })
-
+              });
             });
           } else {
             this.$toast("退回失败 >_<");
@@ -368,27 +416,6 @@ export default {
       this.show = true;
       this.formData = arr;
     },
-  },
-  beforeCreate() {
-    api.getFormsResponsesAPI1("129").then((res)=>{
-      this.formWishNum=res.data
-    })
-    api.getFormsAPI1("129").then((res) => {
-      console.log(res)
-      this.formWishNameData = res.data.fields;
-    });
-    //获取心愿表单数据
-    api.getFormsAPI("328").then((res) => {
-      this.formNameData = res.data.fields;
-      this.imgItem = unit.getImgUrl(res.data.description)
-    });
-    //  获取心愿审核的数据
-    api.getFormsResponsesAPI("328").then((res) => {
-      this.formSumData = res.data;
-      this.auditFormData=unit.createdObj('status',this.formNameData,this.formSumData,'待审核',this.myCommunity)
-      this.passFormData=unit.createdObj('status',this.formNameData,this.formSumData,'已通过',this.myCommunity)
-      this.unpassFormData=unit.createdObj('status',this.formNameData,this.formSumData,'已退回',this.myCommunity)
-    });
   },
 };
 </script>
@@ -426,9 +453,9 @@ export default {
       }
     }
     .wishContent {
-      width:  14rem;
+      width: 14rem;
       margin: 0 auto;
-      p:first-child{
+      p:first-child {
         height: 40px;
       }
       p {
