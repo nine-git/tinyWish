@@ -225,9 +225,8 @@ export default {
             },
           };
           api.postPushWeChat(pushData, headers).then((res) => {
-            console.log(res)
             this.$toast("已通过");
-            //this.$router.go(0);
+            this.$router.go(0);
           });
         } else {
           this.$toast("通过失败 >_<");
