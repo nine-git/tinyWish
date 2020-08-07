@@ -227,7 +227,7 @@ export default {
                   )
                   api.postPushGXWeChat(pushStreetData, this.headers).then(res=>{
                     this.$toast("已通过");
-                    //this.$router.go(0);
+                    this.$router.go(0);
                   })
                 })
               }
@@ -322,6 +322,7 @@ export default {
               "不好意思，您的心愿不满足审核条件！",
               "http://fs.yqfw.cdyoue.com/FrK0znBbMdci-I4iqLuOgOK6tIPR")
             api.postPushWeChat(pushData, this.headers).then((res) => {
+              console.log(res)
               let restNumber=''
               this.formWishNameData.forEach(item=>{
                 if (item.identity_key=="rest_number"){
