@@ -131,7 +131,7 @@
 import claimHeader from "../component/header";
 import api from "../../api/api";
 import unit from "@/api/unit";
-import formId from "@/settings/table"
+import formId from "@/settings/table";
 
 export default {
   name: "wish",
@@ -269,13 +269,15 @@ export default {
               value_id: res.data.id,
             });
             // 发请求上传图片
-            api.putFormsAmendAPI(formId.wish, this.dataID, payload).then((res) => {
-              if (res.status === 200) {
-                this.$toast("上传成功 ✨");
-              } else {
-                this.$toast("上传失败 >_<");
-              }
-            });
+            api
+              .putFormsAmendAPI(formId.wish, this.dataID, payload)
+              .then((res) => {
+                if (res.status === 200) {
+                  this.$toast("上传成功 ✨");
+                } else {
+                  this.$toast("上传失败 >_<");
+                }
+              });
           } else {
             this.$toast("网络波动，请再试一次");
           }

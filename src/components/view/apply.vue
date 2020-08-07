@@ -127,11 +127,11 @@
                 />
               </p>
             </div>
-              <button @click="finish(tableData)" class="popup_button button">资料提交</button>
+            <button @click="finish(tableData)" class="popup_button button">资料提交</button>
           </div>
           <div v-else>
             <p class="popup_img_title">交接照片：</p>
-            <img :src="fromData.connect_img" alt class="popup_img" />
+            <img v-for="item in connect_img" :src="item" :key="item" alt class="popup_img" />
 
             <van-field label="交接描述：" readonly type="text" v-model="fromData.connect_describe" />
             <van-field label="交接时间：" readonly type="text" v-model="fromData.connect_time" />
@@ -308,11 +308,11 @@ export default {
     },
     // 根据对象获取值
     getValue(arr, obj) {
-      let tempObj = {}
-      arr.forEach(item => {
-        tempObj[item] = obj.mapped_values[item].exported_value[0]
-      })
-      return tempObj
+      let tempObj = {};
+      arr.forEach((item) => {
+        tempObj[item] = obj.mapped_values[item].exported_value[0];
+      });
+      return tempObj;
     },
     claim(el) {
       el.entries.forEach((element) => {
@@ -344,10 +344,11 @@ export default {
           claim_time: el.mapped_values.claim_time.exported_value[0],
         };
         if (el.mapped_values.connect_time) {
+          this.connect_img = [];
           el.entries.forEach((el) => {
             if (el.field_id === 9267) {
               let str = el.attachment.download_url;
-              this.connect_img = str.slice(0, str.indexOf("?"));
+              this.connect_img.push(str.slice(0, str.indexOf("?")));
             }
           });
           this.fromData = {
